@@ -1,4 +1,4 @@
-.PHONY: clean test help typecheck quality
+.PHONY: clean clean-typecheck localtest test help quality repl rubocop
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -16,6 +16,14 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 default: clean-coverage test coverage clean-typecoverage typecheck typecoverage quality ## run default typechecking, tests and quality
+
+clean-typecheck: ## Refresh information that type checking depends on
+	bundle install
+	bundle exec solargraph clear
+	rm -fr .yardoc/
+	bundle exec yard gems
+	bundle exec solargraph scan
+	echo all clear
 
 typecheck: ## validate types in code and configuration
 
@@ -44,9 +52,12 @@ Gemfile.lock.installed: Gemfile.lock
 
 bundle_install: Gemfile.lock.installed ## Install Ruby dependencies
 
-clean: ## remove all built artifacts
+clear_metrics: ## remove or reset result artifacts created by tests and quality tools
+	bundle exec rake clear_metrics
 
-test: ## run tests quickly
+clean: clear_metrics ## remove all built artifacts
+
+test: spec ## run tests quickly
 
 citest: test ## Run unit tests from CircleCI
 
@@ -55,18 +66,27 @@ overcommit: ## run precommit quality checks
 
 quality: overcommit ## run precommit quality checks
 
-clean-coverage: ## Clean out previous output of test coverage to avoid flaky results from previous runs
+spec: ## Run lower-level tests
+	@bundle exec rake spec
+
+feature: ## Run higher-level tests
+	@bundle exec rake feature
+
+localtest: ## run default local actions
+	@bundle exec rake localtest
+
+repl:  ## Load up {{cookiecutter.project_slug}} in pry
+	@bundle exec rake repl
+
+clean-coverage:
+	@bundle exec rake clear_metrics
 
 coverage: test report-coverage ## check code coverage
+	@bundle exec rake undercover
 
 report-coverage: test ## Report summary of coverage to stdout, and generate HTML, XML coverage report
 
-report-coverage-to-codecov: report-coverage ## use codecov.io for PR-scoped code coverage reports
-	@curl -Os https://uploader.codecov.io/latest/linux/codecov
-	@chmod +x codecov
-	@./codecov --file coverage.xml --nonZero
-
-cicoverage: report-coverage-to-codecov ## check code coverage, then report to codecov
+cicoverage: coverage ## check code coverage
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall

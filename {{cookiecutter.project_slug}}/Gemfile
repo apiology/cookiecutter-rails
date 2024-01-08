@@ -5,3 +5,16 @@ source 'https://rubygems.org'
 gem 'mdl'
 gem 'overcommit', ['>=0.61.0', '<0.62.0']
 gem 'punchlist'
+gem 'rake'
+gem 'rspec'
+gem 'rubocop', ['~> 1.52']
+gem 'rubocop-rake'
+# ensure version with RSpec/VerifiedDoubleReference
+gem 'rubocop-rspec', ['>=2.10.0']
+# ensure version with branch coverage
+gem 'simplecov', ['>=0.18.0']
+gem 'simplecov-lcov'
+gem 'solargraph', ['>=0.50.0']
+gem 'undercover'
+gem 'webmock'
+gem 'yard'
