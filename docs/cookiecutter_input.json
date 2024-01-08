@@ -1,0 +1,15 @@
+{
+    "_checkout": null,
+    "_output_dir": "/Users/broz/src",
+    "_repo_dir": "cookiecutter-cookiecutter",
+    "_template": "cookiecutter-cookiecutter",
+    "email": "vince@broz.cc",
+    "full_name": "Vince Broz",
+    "github_username": "apiology",
+    "language_or_tool": "Rails",
+    "project_name": "Cookiecutter Rails",
+    "project_short_description": "Rails Boilerplate contains all the boilerplate you need to create a Rails project.",
+    "project_slug": "cookiecutter-rails",
+    "project_super_short_description": "Cookiecutter template for a Rails project.",
+    "type_of_github_repo": "public"
+}
