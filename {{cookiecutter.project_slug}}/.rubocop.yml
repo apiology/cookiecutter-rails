@@ -1,4 +1,6 @@
 ---
+inherit_from: .rubocop_todo.yml
+
 Layout/LineLength:
   Max: 120
 
@@ -23,6 +25,8 @@ Metrics/BlockLength:
     - '**/*.rake'
     - 'spec/**/*.rb'
     - 'feature/**/*.rb'
+    # Lots of long 'Rails.application.configure do' blocks are canonical
+    - 'config/**/*.rb'
 
 # I use keyword arguments for a poor man's dependency injection to cut
 # down on the magic in my tests.
@@ -43,6 +47,7 @@ Naming/MethodParameterName:
     - e # exception
     - x # cartesian coordinates
     - y # cartesian coordinates
+    - n # number of things
 
 # by default (EnforcedStyle=NormalCase) this rule doesn't like
 # things like check_1, check_2, etc and wants check1, check2, etc. I
@@ -52,6 +57,17 @@ Naming/MethodParameterName:
 Naming/VariableNumber:
   Enabled: true
   EnforcedStyle: snake_case
+
+# These don't need it, but I'd still like a reminder on new rake tasks
+# on why the stupid thing isn't working.
+Rails/RakeEnvironment:
+  Exclude:
+    - 'lib/tasks/build_docker.rake'
+    - 'lib/tasks/clear_metrics.rake'
+    - 'lib/tasks/overcommit.rake'
+    - 'lib/tasks/populate_heroku.rake'
+    - 'lib/tasks/undercover.rake'
+
 
 # http://www.betterspecs.org/#single
 #
@@ -106,6 +122,7 @@ Style/DocumentationMethod:
   Enabled: true
   Include:
     - 'lib/{{cookiecutter.project_slug}}/*.rb'
+    - 'app/**/*.rb'
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
@@ -113,6 +130,10 @@ Style/StringLiterals:
     - single_quotes
     - double_quotes
   ConsistentQuotesInMultiline: true
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'config.ru'
 
 # Solargraph needs to see a class inherited from Struct to recognize
 # what's going on
@@ -142,7 +163,16 @@ AllCops:
   Exclude:
     - 'bin/*'
     - 'vendor/**/*'
+    - 'db/migrate/**/*.rb'
+    - 'db/schema.rb'
+
+Style/FrozenStringLiteralComment:
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'config.ru'
 
 require:
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-rails

@@ -1,12 +1,16 @@
 ---
 include:
   - "**/*.rb"
+  - "lib/tasks/*.rake"
   - ".git-hooks/**/*.rb"
+  - "script/*"
 exclude:
+  - db/schema.rb # generated
   - spec/**/*
   - test/**/*
   - vendor/**/*
   - ".bundle/**/*"
+  - "db/migrate/**/*" # mostly generated, ritualistic
 require: []
 domains: []
 reporters:
@@ -21,5 +25,6 @@ formatter:
     only: []
     extra_args: []
 require_paths: []
-plugins: []
+plugins:
+  - solargraph-rails
 max_files: 5000
