@@ -52,6 +52,9 @@ PreCommit:
     enabled: true
     flags: ['-c', '.yamllint.yml', '--format=parsable', '--strict']
     on_warn: fail
+    exclude:
+      - '.rubocop_todo.yml' # generated
+      - 'config/**/*.yml' # generated
   CircleCi:
     required_executable: 'circleci'
     flags: ['config', 'validate']
@@ -63,6 +66,14 @@ PreCommit:
     problem_on_unmodified_line: warn
     include:
       - '**/*.rb'
+      - '**/*.rake'
+      - 'script/*'
+    exclude:
+      - 'config/puma.rb'
+      - 'config/routes.rb'
+      - 'config/application.rb'
+      - 'app/mailers/application_mailer.rb'
+      - 'config/importmap.rb'
   Punchlist:
     command: ['bundle', 'exec', 'punchlist']
     enabled: true

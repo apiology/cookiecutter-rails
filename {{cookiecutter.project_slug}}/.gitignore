@@ -58,3 +58,33 @@ requirements_dev.txt.installed
 /spec/reports/
 /tmp/
 /coverage/
+/pkg
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Ignore uploaded files in development.
+/storage/*
+!/storage/.keep
+.byebug_history
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+# Ignore Docker build-generated files
+/Gemfile.lock.deversioned
+
+# Ignore 1Password-generated secrets
+/config/env
+/config/env.rails
