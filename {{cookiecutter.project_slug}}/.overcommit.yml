@@ -23,10 +23,22 @@ PreCommit:
     enabled: true
     description: 'Check for broken symlinks'
     quiet: true
+  RuboCop:
+    enabled: true
+    command: ['bundle', 'exec', 'rubocop']
+    include:
+      - '**/*.gemspec'
+      - '**/*.rake'
+      - '**/*.rb'
+      - '**/*.ru'
+      - '**/Gemfile'
+      - '**/Rakefile'
+      - 'bin/*'
+      - 'exe/*'
+    problem_on_unmodified_line: warn
     exclude:
-      # This is a symlink to sibling checkout of plate-spinner, used
-      # only in local development
-      - config/env.1p
+      - db/migrate/*.rb
+      - db/schema.rb
   PythonFlake8:
     enabled: true
     on_warn: fail
@@ -46,10 +58,26 @@ PreCommit:
     include:
       - '.circleci/config.yml'
     enabled: true
+  SolargraphTypecheck:
+    enabled: true
+    problem_on_unmodified_line: warn
+    include:
+      - '**/*.rb'
   Punchlist:
     command: ['bundle', 'exec', 'punchlist']
     enabled: true
     problem_on_unmodified_line: warn
+
+PrePush:
+  RakeTarget:
+    enabled: true
+    command: ['bundle', 'exec', 'rake']
+    include:
+      - 'Rakefile'
+    targets:
+      - 'clear_metrics'
+      - 'spec'
+      - 'undercover'
 
 #PostCheckout:
 #  ALL: # Special hook name that customizes all hooks of this type
