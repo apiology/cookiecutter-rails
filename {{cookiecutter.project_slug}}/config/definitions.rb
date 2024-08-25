@@ -8,6 +8,9 @@
 # the workspace maps. It's recommended that you keep it in a standalone file
 # instead of pasting it into an existing one.
 #
+# we copy from upstream places, so ignore long lines
+#
+# rubocop:disable Layout/LineLength
 # @!parse
 #   class ActionController::API
 #     include ActionController::MimeResponds
@@ -21,6 +24,7 @@
 #     include ActionController::Metal
 #     include ActionController::Rendering
 #     include ActionController::Head
+#     extend ActionController::AllowBrowser::ClassMethods
 #     extend ActiveSupport::Callbacks::ClassMethods
 #     extend AbstractController::Callbacks::ClassMethods
 #   end
@@ -41,6 +45,13 @@
 #     extend ActiveJob::Core::ClassMethods
 #     extend ActiveJob::QueueName::ClassMethods
 #     extend ActiveJob::Enqueuing::ClassMethods
+#   end
+#   class ActionController::AllowBrowser::ClassMethods
+#       # @return [void]
+#       def allow_browser(versions:,
+#                         block: -> { render file: Rails.root.join("public/406-unsupported-browser.html"), layout: false, status: :not_acceptable },
+#                         **options)
+#       end
 #   end
 #   class ActiveRecord::Relation
 #     def find_or_create_by(**attributes, &block); end
@@ -175,3 +186,4 @@
 #     # @return [Object,nil]
 #     def self.[](key); end
 #   end
+# rubocop:enable Layout/LineLength
