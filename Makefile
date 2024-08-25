@@ -46,7 +46,7 @@ bundle_install: Gemfile.lock.installed ## Install Ruby dependencies
 clean: ## remove all built artifacts
 
 test: ## run tests quickly
-	pytest --maxfail=0
+	pytest --maxfail=0 --keep-baked-projects
 
 citest: test ## Run unit tests from CircleCI
 
