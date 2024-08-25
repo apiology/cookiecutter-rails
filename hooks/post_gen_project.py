@@ -43,6 +43,7 @@ if __name__ == '__main__':
                                '--skip',
                                '{{cookiecutter.project_slug}}'], cwd=parent)
 #        subprocess.check_call(['rails', 'generate', 'rspec:install'])
+        subprocess.check_call(['make', 'bundle_install'])
         subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
         subprocess.check_call(['git', 'add', '-A'])
         subprocess.check_call(['make', 'clean-typecheck'])
