@@ -6,17 +6,20 @@ rules:
   comments: disable
   line-length:
     max: 120
-# Rails ships with some things
-indentation:
-  ignore:
-    - .github/dependabot.yml
-brackets:
-  ignore:
-    - .github/workflows/ci.yml
-document-start:
-  ignore:
-    - .github/workflows/ci.yml
-    - .github/dependabot.yml
-truthy:
-  ignore:
-    - .github/workflows/ci.yml
+  # Rails ships with some things
+  indentation:
+    ignore:
+      - /.github/dependabot.yml
+  brackets:
+    ignore:
+      - /.github/workflows/ci.yml
+  document-start:
+    ignore:
+      - /.github/workflows/ci.yml
+      - /.github/dependabot.yml
+  truthy:
+    ignore:
+      - /.github/workflows/ci.yml
+  empty-lines:
+    ignore:
+      - /.github/workflows/ci.yml
