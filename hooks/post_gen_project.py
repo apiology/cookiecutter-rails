@@ -46,8 +46,7 @@ if __name__ == '__main__':
         subprocess.check_call(['make', 'bundle_install'])
         subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
         subprocess.check_call(['git', 'add', '-A'])
-        subprocess.check_call(['bundle', 'exec', 'yard', 'gems'])
-        subprocess.check_call(['bundle', 'exec', 'solargraph', 'scan'])
+        subprocess.check_call(['make', 'clean-typecheck'])
         subprocess.check_call(['bundle', 'exec', 'git', 'commit', '-m',
                                'rails new'])
 
