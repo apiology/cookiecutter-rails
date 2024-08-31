@@ -69,20 +69,20 @@
 #
 #   require 'logger'
 #
-#   module ::Rails
-#     class << self
-#       # @return [Logger]
-#       def logger; end
-#     end
-#     class << self
-#       # @return [Rails::Application]
-#       def application; end
-#     end
-#     class Railtie
-#       # @yieldself [Rails::Application]
-#       # @return [void]
-#       def configure(&block); end
-#     end
+#   class Rails
+#     # @return [Logger]
+#     def self.logger; end
+#     # @return [Rails::Application]
+#     def self.application; end
+#   end
+#   class Rails::Railtie
+#     # @yieldself [Rails::Application]
+#     def configure(&block); end
+#   end
+#   class Rails::Application
+#     include Rails::Railtie
+#     # @return [Rails::Application::Configuration]
+#     def config; end
 #   end
 #
 # @!override ActiveRecord::FinderMethods#find
