@@ -86,9 +86,8 @@
 #     def configure(&block); end
 #   end
 #   class Rails::Application
-#     include Rails::Railtie
 #     # @return [Rails::Application::Configuration]
-#     def config; end
+#     def self.config; end
 #   end
 #
 # @!override ActiveRecord::FinderMethods#find
