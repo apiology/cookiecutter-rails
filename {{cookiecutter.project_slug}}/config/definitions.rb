@@ -54,11 +54,13 @@
 #       end
 #   end
 #   class ActiveRecord::Relation
+#     # @return [ActiveRecord::Base]
 #     def find_or_create_by(**attributes, &block); end
 #     include Enumerable
 #     # @return [ActiveRecord::Result]
 #     def records; end
 #     # @see ActiveRecord::Result#each
+#     # @return [void]
 #     def each(&block); end
 #   end
 #   class ActiveRecord::Result
@@ -78,6 +80,7 @@
 #     end
 #     class Railtie
 #       # @yieldself [Rails::Application]
+#       # @return [void]
 #       def configure(&block); end
 #     end
 #   end
@@ -105,10 +108,16 @@
 #       module ClassMethods
 #         # @param names [Array<Symbol>]
 #         # @return [void]
+#         def before_action(*names, &block); end
+#         # @param names [Array<Symbol>]
+#         # @return [void]
 #         def prepend_before_action(*names, &block); end
 #         # @param names [Array<Symbol>]
 #         # @return [void]
 #         def skip_before_action(*names, &block); end
+#         # @param names [Array<Symbol>]
+#         # @return [void]
+#         def around_action(*names, &block); end
 #       end
 #     end
 #   end
@@ -143,6 +152,10 @@
 #         def html_notes; end
 #       end
 #     end
+#     module Errors
+#       class NotFound < StandardError; end
+#       class InvalidRequest < StandardError; end
+#     end
 #     module ProxiedResourceClasses
 #       class Task
 #         # Returns the complete task record for a single task.
@@ -166,9 +179,10 @@
 #         def get_all(workspace: required("workspace"), resource: nil, per_page: 20, options: {})
 #         end
 #         # @param options [Hash] the request I/O options
-#         # @param opt_fields [List<str>]  Defines fields to return.
+#         # @param opt_fields [Array<str>]  Defines fields to return.
 #         # @param opt_pretty [Boolean]  Provides “pretty” output.
 #         # @param data [Hash] the attributes to POST
+#         # @param client [Asana::Client] the client to use for the request
 #         # @return [Asana::Resources::Webhook]
 #         def create_webhook(client, options: {}, **data)
 #         end
