@@ -47,6 +47,11 @@
 #     extend ActiveJob::Enqueuing::ClassMethods
 #   end
 #   class ActionController::AllowBrowser::ClassMethods
+#       # @param versions [Array<String>]
+#       # @param block [Proc]
+#       # @param layout [Boolean]
+#       # @param status [Symbol]
+#       # @param options [Hash]
 #       # @return [void]
 #       def allow_browser(versions:,
 #                         block: -> { render file: Rails.root.join("public/406-unsupported-browser.html"), layout: false, status: :not_acceptable },
@@ -77,6 +82,7 @@
 #   end
 #   class Rails::Railtie
 #     # @yieldself [Rails::Application]
+#     # @return [void]
 #     def configure(&block); end
 #   end
 #   class Rails::Application
@@ -139,56 +145,6 @@
 #   @return [String>]
 #
 # @!parse
-#   module Asana
-#     class Client
-#       # @return [Asana::ProxiedResourceClasses::Task]
-#       def tasks; end
-#       # @return [Asana::ProxiedResourceClasses::Webhook]
-#       def webhooks; end
-#     end
-#     module Resources
-#       class Task
-#         # @return [String, nil]
-#         def html_notes; end
-#       end
-#     end
-#     module Errors
-#       class NotFound < StandardError; end
-#       class InvalidRequest < StandardError; end
-#     end
-#     module ProxiedResourceClasses
-#       class Task
-#         # Returns the complete task record for a single task.
-#         #
-#         # @param id [String] The task to get.
-#         # @param options [Hash] the request I/O options.
-#         # @return [Asana::Resources::Task]
-#         def find_by_id(id, options: {}); end
-#       end
-#     end
-#     module ProxiedResourceClasses
-#       class Webhook
-#         # Returns the compact representation of all webhooks your app has
-#         # registered for the authenticated user in the given workspace.
-#         #
-#         # @param workspace [String] The workspace to query for webhooks in.
-#         # @param resource [String] Only return webhooks for the given resource.
-#         # @param per_page [Integer] the number of records to fetch per page.
-#         # @param options [Hash] the request I/O options.
-#         # @return [Array<Asana::Resources::Webhook>]
-#         def get_all(workspace: required("workspace"), resource: nil, per_page: 20, options: {})
-#         end
-#         # @param options [Hash] the request I/O options
-#         # @param opt_fields [Array<str>]  Defines fields to return.
-#         # @param opt_pretty [Boolean]  Provides “pretty” output.
-#         # @param data [Hash] the attributes to POST
-#         # @param client [Asana::Client] the client to use for the request
-#         # @return [Asana::Resources::Webhook]
-#         def create_webhook(client, options: {}, **data)
-#         end
-#       end
-#     end
-#   end
 #   class ENV
 #     # @param key [String]
 #     # @param default [Object]
