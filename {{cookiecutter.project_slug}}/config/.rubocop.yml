@@ -1,0 +1,57 @@
+---
+inherit_from: ../.rubocop.yml
+
+# Adjust style to match what 'rails app:update' will show the fewest
+# diffs with
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Layout/ExtraSpacing:
+  Exclude:
+    # weird glitch in Rails default
+    - environments/production.rb
+
+Layout/EmptyLines:
+  Exclude:
+    # weird glitch in Rails default
+    - environments/development.rb
+    - initializers/new_framework_defaults_7_0.rb
+
+Style/RedundantConstantBase:
+  Exclude:
+    # weird glitch in Rails default
+    - environments/production.rb
+
+Layout/SpaceAroundOperators:
+  Exclude:
+    # weird glitch in Rails default
+    - environments/production.rb
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Exclude:
+    # weird glitch in Rails default
+    - environments/production.rb
+
+
+Layout/TrailingWhitespace:
+  Exclude:
+    # weird glitch in Rails default
+    - initializers/new_framework_defaults_7_0.rb
+
+Style/GlobalStdStream:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/RedundantFetchBlock:
+  Exclude:
+    # weird glitch in Rails default
+    - puma.rb

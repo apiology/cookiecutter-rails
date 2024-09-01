@@ -29,12 +29,26 @@ if __name__ == '__main__':
         subprocess.check_call(['bundle', 'exec', 'overcommit', '--install'])
         subprocess.check_call(['bundle', 'exec', 'overcommit', '--sign'])
         subprocess.check_call(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
-        subprocess.check_call(['bundle', 'install'])
-        subprocess.check_call(['bundle', 'exec', 'rubocop', '-a'])
+        subprocess.check_call(['make', 'bundle_install'])
+        subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
         subprocess.check_call(['git', 'add', '-A'])
-        subprocess.check_call(['bundle', 'exec', 'yard', 'gems'])
+        subprocess.check_call(['make', 'clean-typecheck'])
         subprocess.check_call(['bundle', 'exec', 'git', 'commit', '-m',
                                'Initial commit from boilerplate'])
+        subprocess.check_call(['gem', 'install', 'rails', '-v', '~> 7.0'])
+        parent = os.path.dirname(PROJECT_DIRECTORY)
+        subprocess.check_call(['rails', 'new',
+                               '--database=postgresql',
+                               '--skip-test',
+                               '--skip',
+                               '{{cookiecutter.project_slug}}'], cwd=parent)
+#        TODO: subprocess.check_call(['rails', 'generate', 'rspec:install'])
+        subprocess.check_call(['make', 'bundle_install'])
+        subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
+        subprocess.check_call(['git', 'add', '-A'])
+        subprocess.check_call(['make', 'clean-typecheck'])
+        subprocess.check_call(['bundle', 'exec', 'git', 'commit', '-m',
+                               'rails new'])
 
     if os.environ.get('SKIP_GITHUB_AND_CIRCLECI_CREATION', '0') != '1':
         if 'none' != '{{ cookiecutter.type_of_github_repo }}':

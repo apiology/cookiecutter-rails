@@ -5,7 +5,7 @@ Cookiecutter Rails
 .. image:: https://circleci.com/gh/apiology/cookiecutter-rails.svg?style=svg
     :target: https://circleci.com/gh/apiology/cookiecutter-rails
 
-Rails Boilerplate contains all the boilerplate you need to create a Rails project.
+Rails Boilerplate contains all the boilerplate you need to create a Ruby on Rails project.
 
 This is a fork
 --------------
