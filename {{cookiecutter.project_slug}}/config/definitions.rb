@@ -89,8 +89,6 @@
 #       def configure(&block); end
 #     end
 #     class Application < Engine
-#       extend Railtie
-#       include Railtie
 #       # @yieldself [Rails::Application]
 #       # @return [void]
 #       def configure(&block); end
