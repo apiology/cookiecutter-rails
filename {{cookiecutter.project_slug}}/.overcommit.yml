@@ -54,7 +54,6 @@ PreCommit:
     on_warn: fail
     exclude:
       - '.rubocop_todo.yml' # generated
-      - 'config/**/*.yml' # generated
   CircleCi:
     required_executable: 'circleci'
     flags: ['config', 'validate']

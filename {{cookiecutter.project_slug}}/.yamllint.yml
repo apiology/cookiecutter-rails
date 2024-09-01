@@ -9,17 +9,18 @@ rules:
   # Rails ships with some things
   indentation:
     ignore:
-      - /.github/dependabot.yml
+      - '**/.github/dependabot.yml'
   brackets:
     ignore:
-      - /.github/workflows/ci.yml
+      - '**/.github/workflows/ci.yml'
   document-start:
     ignore:
-      - /.github/workflows/ci.yml
-      - /.github/dependabot.yml
+      - '**/.github/workflows/ci.yml'
+      - '**/.github/dependabot.yml'
+      - '**/config/**/*.yml'
   truthy:
     ignore:
-      - /.github/workflows/ci.yml
+      - '**/.github/workflows/ci.yml'
   empty-lines:
     ignore:
-      - /.github/workflows/ci.yml
+      - '**/.github/workflows/ci.yml'
