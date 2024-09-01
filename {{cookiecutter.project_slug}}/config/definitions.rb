@@ -47,7 +47,7 @@
 #     extend ActiveJob::Enqueuing::ClassMethods
 #   end
 #   class ActionController::AllowBrowser::ClassMethods
-#       # @param versions [Array<String>]
+#       # @param versions [Symbol, Hash<Symbol, [Number, Boolean]>]
 #       # @param block [Proc]
 #       # @param layout [Boolean]
 #       # @param status [Symbol]
