@@ -1,4 +1,4 @@
-.PHONY: clean clean-typecheck feature help localtest quality repl rubocop spec test
+.PHONY: clean clean-typecheck localtest test help quality repl spec feature
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -35,14 +35,36 @@ clean-typecoverage: ## Clean out type-related coverage previous results to avoid
 
 citypecoverage: typecoverage ## Run type checking, ratchet coverage, and then complain if ratchet needs to be committed
 
+docker-start:
+	@if [ "$$(uname)" == Darwin ]; then open /Applications/Docker.app; fi
+	@while ! docker pull ubuntu; do sleep 1; done
+
+docker-all: config/env config/env.rails  ## bring up docker compose with full application (including job processing) and databases running
+	docker build --platform linux/amd64 . -t apiology/{{cookiecutter.project_slug}}:latest
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build
+	docker compose up
+
+docker-web: config/env config/env.rails  ## bring up docker compose with web application and databases running
+	rake build_docker_precache
+	docker build --platform linux/amd64 . -t apiology/{{cookiecutter.project_slug}}:latest
+	DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build
+	docker compose up dev_database test_database jobs web
+
+docker: config/env config/env.rails docker-start  ## bring up docker compose with databases running
+	@docker compose up -d dev_database test_database
+
+config/env: config/env.1p
+	cat config/env.1p | cut -d= -f1 > config/env
+
+config/env.rails: config/env.rails.1p
+	cat config/env.rails.1p | cut -d= -f1 > config/env.rails
+
 requirements_dev.txt.installed: requirements_dev.txt
 	pip install -q --disable-pip-version-check -r requirements_dev.txt
 	touch requirements_dev.txt.installed
 
 pip_install: requirements_dev.txt.installed ## Install Python dependencies
 
-# bundle install doesn't get run here so that we can catch it below in
-# fresh-checkout and fresh-rbenv cases
 Gemfile.lock: Gemfile
 
 # Ensure any Gemfile.lock changes ensure a bundle is installed.
@@ -75,8 +97,8 @@ feature: ## Run higher-level tests
 localtest: ## run default local actions
 	@bundle exec rake localtest
 
-repl:  ## Load up {{cookiecutter.project_slug}} in pry
-	@bundle exec rake repl
+repl:
+	rails c
 
 clean-coverage:
 	@bundle exec rake clear_metrics
