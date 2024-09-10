@@ -73,7 +73,6 @@ Gemfile.lock: Gemfile
 
 # Ensure any Gemfile.lock changes ensure a bundle is installed.
 Gemfile.lock.installed: Gemfile.lock
-	bundle config set rubygems.pkg.github.com apiology:$${GITHUB_PACKAGES_READ_API_KEY:?}
 	bundle install
 	touch Gemfile.lock.installed
 
