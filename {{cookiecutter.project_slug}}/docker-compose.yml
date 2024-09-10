@@ -10,7 +10,7 @@ services:
       - "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PORT:5432"
 
     environment:
-      POSTGRES_USER: "${{cookiecutter.project_slug.replace('-', '_').upper()}_DEV_DATABASE_USERNAME"
+      POSTGRES_USER: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_USERNAME"
       POSTGRES_PASSWORD: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PASSWORD"
       POSTGRES_DB: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_DATABASE"
 
