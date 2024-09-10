@@ -65,11 +65,7 @@ requirements_dev.txt.installed: requirements_dev.txt
 
 pip_install: requirements_dev.txt.installed ## Install Python dependencies
 
-# bundle install doesn't get run here so that we can catch it below in
-# fresh-checkout and fresh-rbenv cases
 Gemfile.lock: Gemfile
-	@echo "Please bundle install from Gemfile"
-	@exit 1
 
 # Ensure any Gemfile.lock changes ensure a bundle is installed.
 Gemfile.lock.installed: Gemfile.lock
