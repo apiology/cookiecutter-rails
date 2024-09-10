@@ -1,0 +1,77 @@
+---
+# https://herewecode.io/blog/create-a-postgresql-database-using-docker-compose/
+version: '3'
+
+services:
+  dev_database:
+    image: 'postgres:latest'
+
+    ports:
+      - "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PORT:5432"
+
+    environment:
+      POSTGRES_USER: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_USERNAME"
+      POSTGRES_PASSWORD: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PASSWORD"
+      POSTGRES_DB: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_DATABASE"
+
+  test_database:
+    image: 'postgres:latest'
+
+    ports:
+      - "${{cookiecutter.project_slug.replace('-', '_').upper()}}_TEST_DATABASE_PORT:5432"
+    environment:
+      POSTGRES_USER: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_TEST_DATABASE_USERNAME"
+      POSTGRES_PASSWORD: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_TEST_DATABASE_PASSWORD"
+      POSTGRES_DB: "${{cookiecutter.project_slug.replace('-', '_').upper()}}_TEST_DATABASE_DATABASE"
+  jobs:
+    build:
+      context: .
+      dockerfile: Dockerfile.jobs
+    environment:
+      - HEROKU_APP_NAME=docker_compose
+      - RAILS_ENV=development
+      - DYNO=jobs
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_DATABASE
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_USERNAME
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PASSWORD
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_SERVER=dev_database
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PORT=5432
+    env_file:
+      - config/env
+      - config/env.rails
+    depends_on:
+      - dev_database
+    volumes:
+      # don't overlay vendor/, which will be macOS-specific
+      - ./lib:/root/{{cookiecutter.project_slug}}/lib
+      - ./app:/root/{{cookiecutter.project_slug}}/app
+      - ./config:/root/{{cookiecutter.project_slug}}/config
+      - ./log:/root/{{cookiecutter.project_slug}}/log
+  # https://docs.docker.com/samples/rails/
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    command: sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    env_file:
+      - config/env
+      - config/env.rails
+    environment:
+      - HEROKU_APP_NAME=docker_compose
+      - RAILS_ENV=development
+      - DYNO=web
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_DATABASE
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_USERNAME
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PASSWORD
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_SERVER=dev_database
+      - {{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_PORT=5432
+    volumes:
+      # don't overlay vendor/, which will be macOS-specific
+      - ./lib:/root/{{cookiecutter.project_slug}}/lib
+      - ./app:/root/{{cookiecutter.project_slug}}/app
+      - ./config:/root/{{cookiecutter.project_slug}}/config
+      - ./log:/root/{{cookiecutter.project_slug}}/log
+    ports:
+      - "3000:3000"
+    depends_on:
+      - dev_database
