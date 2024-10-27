@@ -290,6 +290,9 @@ GEM
       rubocop (~> 1.0)
     rubocop-rspec (3.0.4)
       rubocop (~> 1.61)
+    rubocop-rspec_rails (2.30.0)
+      rubocop (~> 1.61)
+      rubocop-rspec (~> 3, >= 3.0.1)
     ruby-progressbar (1.13.0)
     rugged (1.7.2)
     securerandom (0.3.1)
@@ -400,6 +403,7 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rake
   rubocop-rspec (>= 2.10.0)
+  rubocop-rspec_rails
   simplecov (>= 0.18.0)
   simplecov-lcov
   solargraph (>= 0.50.0)
