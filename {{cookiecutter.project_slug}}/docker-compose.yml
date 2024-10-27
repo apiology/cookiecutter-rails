@@ -1,7 +1,5 @@
 ---
 # https://herewecode.io/blog/create-a-postgresql-database-using-docker-compose/
-version: '3'
-
 services:
   dev_database:
     image: 'postgres:latest'
