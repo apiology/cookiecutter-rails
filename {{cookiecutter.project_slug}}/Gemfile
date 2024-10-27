@@ -75,6 +75,7 @@ group :development do
   gem 'rubocop-rake'
   # ensure version with RSpec/VerifiedDoubleReference
   gem 'rubocop-rspec', ['>=2.10.0']
+  gem 'rubocop-rspec_rails'
   # https://github.com/castwide/solargraph/pull/676
   # gem 'solargraph', ['>=0.50.0']
   gem 'solargraph',
