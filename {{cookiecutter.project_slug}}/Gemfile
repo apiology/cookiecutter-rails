@@ -66,7 +66,7 @@ end
 group :development do
   gem 'annotate'
   gem 'listen', '~> 3.2'
-  gem 'overcommit', ['>=0.61.0', '<0.62.0']
+  gem 'overcommit', ['>=0.64.0', '<0.65.0']
   gem 'punchlist'
   # ensure recent definitions
   gem 'rbs'
@@ -76,8 +76,13 @@ group :development do
   # ensure version with RSpec/VerifiedDoubleReference
   gem 'rubocop-rspec', ['>=2.10.0']
   # https://github.com/castwide/solargraph/pull/676
-  gem 'solargraph', ['>=0.50.0']
-  gem 'solargraph-rails', ['>=1.1.0']
+  # gem 'solargraph', ['>=0.50.0']
+  gem 'solargraph',
+      git: 'https://github.com/apiology/solargraph',
+      branch: 'fix_kwarg_typecheck_issue'
+  gem 'solargraph-rails',
+      git: 'https://github.com/apiology/solargraph-rails',
+      branch: 'support_model_writers'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 4.0'
   gem 'spring-watcher-listen', '~> 2.1'
@@ -92,6 +97,7 @@ group :development do
   # gem "spring"
 end
 
+gem 'ostruct'
 # https://stackoverflow.com/questions/70500220/rails-7-ruby-3-1-loaderror-cannot-load-such-file-net-smtp
 gem 'net-imap', require: false
 gem 'net-pop', require: false
