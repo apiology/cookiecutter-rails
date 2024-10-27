@@ -36,6 +36,7 @@ def create_onepass_db(onepass_entry, password, database, password_field='passwor
         create_onepass_entry(onepass_entry)
         add_onepass_password_field(onepass_entry, password)
         add_onepass_field(onepass_entry, 'port', port)
+        add_onepass_field(onepass_entry, 'username', "{{ cookiecutter.project_slug.replace('-', '_') }}")
         add_onepass_field(onepass_entry, 'database', database)
         if server is not None:
             add_onepass_field(onepass_entry, 'server', server)
@@ -46,15 +47,10 @@ def random_password():
     return subprocess.check_output(['openssl', 'rand', '-base64', '32']).decode().strip()
 
 
-def create_onepass_login(onepass_entry):
-    add_onepass_password_field(onepass_entry, password)
-
-
 def create_production_db_onepass_entry():
-    create_onepass_db("{{ cookiecutter.project_slug }} production database",
-                      password=random_password(),
-                      port=5432,
-                      database="{{ cookiecutter.project_slug }}")
+    onepass_entry = "{{ cookiecutter.project_slug }} production database"
+    if not onepass_entry_exists(onepass_entry):
+        create_onepass_entry(onepass_entry)
 
 
 def create_docker_compose_db_onepass_entry(rails_env, port):
@@ -108,10 +104,9 @@ if __name__ == '__main__':
                     master_key = f.read().strip()
                 create_onepass_entry(main_onepass_entry)
                 add_onepass_password_field(main_onepass_entry, master_key, password_field='master key')
-            create_docker_compose_db_onepass_entry('dev', port=5432)
-            create_docker_compose_db_onepass_entry('test', port=5433)
+            create_docker_compose_db_onepass_entry('dev', port={{cookiecutter.db_port_prefix}}2) # noqa: E999
+            create_docker_compose_db_onepass_entry('test', port={{cookiecutter.db_port_prefix}}3) # noqa: E999
             create_production_db_onepass_entry()
-#        TODO: subprocess.check_call(['rails', 'generate', 'rspec:install'])
         subprocess.check_call(['make', 'bundle_install'])
         subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
         subprocess.check_call(['git', 'add', '-A'])
