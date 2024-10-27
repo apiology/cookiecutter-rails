@@ -1,4 +1,4 @@
-.PHONY: clean clean-typecheck localtest test help quality repl spec feature
+.PHONY: clean clean-typecheck feature help localtest quality repl rubocop spec test
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -88,6 +88,11 @@ overcommit: ## run precommit quality checks
 
 quality: overcommit ## run precommit quality checks
 
+rubocop: ## Run rubocop
+	@bundle exec rubocop
+
+test: spec ## run tests quickly
+
 spec: ## Run lower-level tests
 	@bundle exec rake spec
 
@@ -117,7 +122,7 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git checkout cookiecutter-template && git push && git checkout main
 	git checkout main && git pull && git checkout -b update-from-cookiecutter-$$(date +%Y-%m-%d-%H%M)
 	git merge cookiecutter-template || true
-	bundle exec overcommit --install
+	bundle exec overcommit --install || true
 	@echo
 	@echo "Please resolve any merge conflicts below and push up a PR with:"
 	@echo

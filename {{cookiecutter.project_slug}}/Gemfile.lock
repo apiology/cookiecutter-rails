@@ -1,3 +1,34 @@
+GIT
+  remote: https://github.com/apiology/solargraph
+  revision: 19b24769041fa8aaa2c368f787c757f2b244371b
+  branch: fix_kwarg_typecheck_issue
+  specs:
+    solargraph (0.50.1)
+      backport (~> 1.2)
+      benchmark
+      bundler (~> 2.0)
+      diff-lcs (~> 1.4)
+      e2mmap
+      jaro_winkler (~> 1.5)
+      kramdown (~> 2.3)
+      kramdown-parser-gfm (~> 1.1)
+      parser (~> 3.0)
+      rbs (~> 2.0)
+      reverse_markdown (~> 2.0)
+      rubocop (~> 1.38)
+      thor (~> 1.0)
+      tilt (~> 2.0)
+      yard (~> 0.9, >= 0.9.24)
+
+GIT
+  remote: https://github.com/apiology/solargraph-rails
+  revision: 43cec6174f60cb5262c26d4c4bb33686a9dbd4ea
+  branch: support_model_writers
+  specs:
+    solargraph-rails (1.1.0)
+      activesupport
+      solargraph
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -87,7 +118,8 @@ GEM
     builder (3.3.0)
     chef-utils (18.5.0)
       concurrent-ruby
-    childprocess (4.1.0)
+    childprocess (5.1.0)
+      logger (~> 1.5)
     coderay (1.1.3)
     concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
@@ -178,8 +210,9 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
-    overcommit (0.61.0)
-      childprocess (>= 0.6.3, < 5)
+    ostruct (0.6.0)
+    overcommit (0.64.0)
+      childprocess (>= 0.6.3, < 6)
       iniparse (~> 1.4)
       rexml (~> 3.2)
     parallel (1.26.3)
@@ -300,25 +333,6 @@ GEM
     simplecov-html (0.12.3)
     simplecov-lcov (0.8.0)
     simplecov_json_formatter (0.1.4)
-    solargraph (0.50.0)
-      backport (~> 1.2)
-      benchmark
-      bundler (~> 2.0)
-      diff-lcs (~> 1.4)
-      e2mmap
-      jaro_winkler (~> 1.5)
-      kramdown (~> 2.3)
-      kramdown-parser-gfm (~> 1.1)
-      parser (~> 3.0)
-      rbs (~> 2.0)
-      reverse_markdown (~> 2.0)
-      rubocop (~> 1.38)
-      thor (~> 1.0)
-      tilt (~> 2.0)
-      yard (~> 0.9, >= 0.9.24)
-    solargraph-rails (1.1.0)
-      activesupport
-      solargraph
     source_finder (3.2.1)
     spring (4.2.1)
     spring-watcher-listen (2.1.0)
@@ -365,7 +379,7 @@ GEM
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.36)
+    yard (0.9.37)
     zeitwerk (2.6.17)
 
 PLATFORMS
@@ -387,7 +401,8 @@ DEPENDENCIES
   net-imap
   net-pop
   net-smtp
-  overcommit (>= 0.61.0, < 0.62.0)
+  ostruct
+  overcommit (>= 0.64.0, < 0.65.0)
   pg (>= 0.18, < 2.0)
   pry
   pry-rails
@@ -402,8 +417,8 @@ DEPENDENCIES
   rubocop-rspec (>= 2.10.0)
   simplecov (>= 0.18.0)
   simplecov-lcov
-  solargraph (>= 0.50.0)
-  solargraph-rails (>= 1.1.0)
+  solargraph!
+  solargraph-rails!
   spring (~> 4.0)
   spring-watcher-listen (~> 2.1)
   sprockets-rails
