@@ -285,6 +285,10 @@ GEM
       nokogiri
     rexml (3.3.6)
       strscan
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
     rspec-core (3.13.0)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.2)
@@ -413,6 +417,7 @@ DEPENDENCIES
   punchlist
   rails (~> 7.2)
   rbs
+  rspec
   rspec-rails
   rubocop (~> 1.52)
   rubocop-rails
