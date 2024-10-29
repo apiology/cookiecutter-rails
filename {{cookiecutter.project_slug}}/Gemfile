@@ -77,11 +77,11 @@ group :development do
   # ensure version with RSpec/VerifiedDoubleReference
   gem 'rubocop-rspec', ['>=2.10.0']
   gem 'rubocop-rspec_rails'
-  # https://github.com/castwide/solargraph/pull/676
+  # https://github.com/castwide/solargraph/pull/727
   # gem 'solargraph', ['>=0.50.0']
   gem 'solargraph',
       git: 'https://github.com/apiology/solargraph',
-      branch: 'fix_kwarg_typecheck_issue'
+      branch: 'master'
   gem 'solargraph-rails',
       git: 'https://github.com/apiology/solargraph-rails',
       branch: 'support_model_writers'
@@ -97,10 +97,13 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem 'yard'
 end
 
-gem 'ostruct'
 # https://stackoverflow.com/questions/70500220/rails-7-ruby-3-1-loaderror-cannot-load-such-file-net-smtp
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'net-smtp', require: false
+
+# Ruby 3.3 made this a separate gem
+gem 'ostruct'
