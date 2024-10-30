@@ -8,9 +8,9 @@ PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 def run(*args, **kwargs):
     if len(kwargs) > 0:
-        print('running with kwargs', kwargs, ":", *args)
+        print('running with kwargs', kwargs, ":", *args, flush=True)
     else:
-        print('running', *args)
+        print('running', *args, flush=True)
     # keep both streams in the same place so that we can weave
     # together what happened on report instead of having them
     # dumped separately
