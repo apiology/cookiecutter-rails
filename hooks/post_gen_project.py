@@ -7,7 +7,7 @@ PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 
 def run(*args, **kwargs):
-    if length(kwargs) > 0:
+    if len(kwargs) > 0:
         print('running with kwargs', kwargs, ":", *args)
     else:
         print('running', *args)
