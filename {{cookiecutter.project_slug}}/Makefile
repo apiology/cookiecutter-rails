@@ -26,6 +26,7 @@ clean-typecheck: ## Refresh information that type checking depends on
 	echo all clear
 
 typecheck: ## validate types in code and configuration
+	bundle exec solargraph typecheck --level strong
 
 citypecheck: typecheck ## Run type check from CircleCI
 
