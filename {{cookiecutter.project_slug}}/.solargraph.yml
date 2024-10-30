@@ -7,14 +7,14 @@ include:
   - ".git-hooks/**/*.rb"
   - "script/*"
 exclude:
-  - db/schema.rb # generated
+  - db/schema.rb
   - spec/**/*
   - test/**/*
   - config/importmap.rb
   - config/puma.rb
   - vendor/**/*
   - ".bundle/**/*"
-  - "db/migrate/**/*" # mostly generated, ritualistic
+  - "db/migrate/**/*"
 require: []
 domains: []
 reporters:
