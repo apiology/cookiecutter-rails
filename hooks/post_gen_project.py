@@ -6,9 +6,12 @@ import subprocess
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 
-def run(args):
-    print('running', args)
-    subprocess.check_call(args)
+def run(*args, **kwargs):
+    if length(kwargs) > 0:
+        print('running with kwargs', kwargs, ":", *args)
+    else:
+        print('running', *args)
+    subprocess.check_call(*args, **kwargs)
 
 
 def remove_file(filepath):
