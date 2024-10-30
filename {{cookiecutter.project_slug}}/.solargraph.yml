@@ -1,5 +1,7 @@
 ---
 include:
+  # process first
+  - "config/annotations*.rb"
   - "**/*.rb"
   - "lib/tasks/*.rake"
   - ".git-hooks/**/*.rb"
