@@ -6,6 +6,17 @@ import subprocess
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 
+def run(*args, **kwargs):
+    if len(kwargs) > 0:
+        print('running with kwargs', kwargs, ":", *args, flush=True)
+    else:
+        print('running', *args, flush=True)
+    # keep both streams in the same place so that we can weave
+    # together what happened on report instead of having them
+    # dumped separately
+    subprocess.check_call(*args, stderr=subprocess.STDOUT, **kwargs)
+
+
 def remove_file(filepath):
     os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
 
@@ -15,18 +26,17 @@ def onepass_entry_exists(onepass_entry):
 
 
 def create_onepass_entry(onepass_entry):
-    subprocess.check_call(['op', 'item', 'create',
+    run(['op', 'item', 'create',
                            '--category=Login',
                            f'--title={onepass_entry}'])
 
 def add_onepass_password_field(onepass_entry, password, password_field='password'):
-	subprocess.check_call(['op', 'item', 'edit',
+	run(['op', 'item', 'edit',
                            onepass_entry,
                            f"{password_field}[password]={password}"])
 
-
 def add_onepass_field(onepass_entry, field_name, field_value):
-	subprocess.check_call(['op', 'item', 'edit',
+	run(['op', 'item', 'edit',
                            onepass_entry,
                            f"{field_name}={field_value}"])
 
@@ -66,7 +76,7 @@ if __name__ == '__main__':
         remove_file('LICENSE')
         remove_file('CONTRIBUTING.rst')
 
-    subprocess.check_call('./fix.sh')
+    run('./fix.sh')
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
         os.environ['SKIP_GITHUB_OP_AND_CIRCLECI_CREATION'] = '1'
@@ -75,23 +85,23 @@ if __name__ == '__main__':
         # Don't run these non-idempotent things when in
         # cookiecutter_project_upgrader, which will run this hook
         # multiple times over its lifetime.
-        subprocess.check_call(['git', 'init'])
-        subprocess.check_call(['git', 'add', '-A'])
-        subprocess.check_call(['bundle', 'exec', 'overcommit', '--install'])
-        subprocess.check_call(['bundle', 'exec', 'overcommit', '--sign'])
-        subprocess.check_call(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
-        subprocess.check_call(['make', 'bundle_install'])
-        subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
-        subprocess.check_call(['git', 'add', '-A'])
-        subprocess.check_call(['make', 'clean-typecheck'])
-        subprocess.check_call(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+        run(['git', 'init'])
+        run(['git', 'add', '-A'])
+        run(['bundle', 'exec', 'overcommit', '--install'])
+        run(['bundle', 'exec', 'overcommit', '--sign'])
+        run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
+        run(['make', 'bundle_install'])
+        run(['bundle', 'exec', 'rubocop', '-A'])
+        run(['git', 'add', '-A'])
+        run(['make', 'clean-typecheck'])
+        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
                                'Initial commit from boilerplate'])
         parent = os.path.dirname(PROJECT_DIRECTORY)
-        subprocess.check_call(['gem', 'install', 'rails', '-v', '~> 7.0'],
+        run(['gem', 'install', 'rails', '-v', '~> 7.0'],
                               cwd=parent)
-        subprocess.check_call(['rbenv', 'version'],
+        run(['rbenv', 'version'],
                               cwd=parent)
-        subprocess.check_call(['rbenv', 'exec', 'rails', 'new',
+        run(['rbenv', 'exec', 'rails', 'new',
                                '--database=postgresql',
                                '--skip-test',
                                '--skip',
@@ -107,11 +117,11 @@ if __name__ == '__main__':
             create_docker_compose_db_onepass_entry('dev', port={{cookiecutter.db_port_prefix}}2) # noqa: E999
             create_docker_compose_db_onepass_entry('test', port={{cookiecutter.db_port_prefix}}3) # noqa: E999
             create_production_db_onepass_entry()
-        subprocess.check_call(['make', 'bundle_install'])
-        subprocess.check_call(['bundle', 'exec', 'rubocop', '-A'])
-        subprocess.check_call(['git', 'add', '-A'])
-        subprocess.check_call(['make', 'clean-typecheck'])
-        subprocess.check_call(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+        run(['make', 'bundle_install'])
+        run(['bundle', 'exec', 'rubocop', '-A'])
+        run(['git', 'add', '-A'])
+        run(['make', 'clean-typecheck'])
+        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
                                'rails new'])
 
     if os.environ.get('SKIP_GITHUB_OP_AND_CIRCLECI_CREATION', '0') != '1':
@@ -129,7 +139,7 @@ if __name__ == '__main__':
             if subprocess.call(['gh', 'repo', 'view',
                                 '{{ cookiecutter.github_username }}/'
                                 '{{ cookiecutter.project_slug }}']) != 0:
-                subprocess.check_call(['gh', 'repo', 'create',
+                run(['gh', 'repo', 'create',
                                        visibility_flag,
                                        '--description',
                                        description,
@@ -137,10 +147,10 @@ if __name__ == '__main__':
                                        '.',
                                        '{{ cookiecutter.github_username }}/'
                                        '{{ cookiecutter.project_slug }}'])
-                subprocess.check_call(['gh', 'repo', 'edit',
+                run(['gh', 'repo', 'edit',
                                        '--allow-update-branch',
                                        '--enable-auto-merge',
                                        '--delete-branch-on-merge'])
-            subprocess.check_call(['git', 'push'])
-            subprocess.check_call(['circleci', 'follow'])
-            subprocess.check_call(['git', 'branch', '--set-upstream-to=origin/main', 'main'])
+            run(['git', 'push'])
+            run(['circleci', 'follow'])
+            run(['git', 'branch', '--set-upstream-to=origin/main', 'main'])
