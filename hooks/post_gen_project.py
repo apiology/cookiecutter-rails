@@ -90,7 +90,7 @@ if __name__ == '__main__':
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
         run(['make', 'build-typecheck'])
-        run(['bundle', 'exec', 'git', 'commit', '-m',
+        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
              'Initial commit from boilerplate'])
 
         parent = os.path.dirname(PROJECT_DIRECTORY)
