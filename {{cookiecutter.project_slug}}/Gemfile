@@ -100,6 +100,25 @@ group :development do
   gem 'yard'
 end
 
+
+{% if cookiecutter.use_checkoff %}# ruby-asana gem is pending key bugfixes for checkoff as of
+# 2021-07-29:
+#
+# See
+#  https://github.com/Asana/ruby-asana/issues/109
+#  https://github.com/Asana/ruby-asana/issues/110
+#
+gem 'asana',
+    git: 'https://github.com/apiology/ruby-asana',
+    branch: 'checkoff_fixes'
+#   path: '/Users/broz/src/ruby-asana'
+# Awaiting merge and release of
+# https://github.com/seamusabshere/cache_method/pull/18
+gem 'cache_method',
+    git: 'https://github.com/apiology/cache_method',
+    branch: 'ruby_3_support'
+gem 'checkoff' # , path: '/Users/broz/src/checkoff'{% endif %}
+
 # https://stackoverflow.com/questions/70500220/rails-7-ruby-3-1-loaderror-cannot-load-such-file-net-smtp
 gem 'net-imap', require: false
 gem 'net-pop', require: false
