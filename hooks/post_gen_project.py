@@ -89,9 +89,10 @@ if __name__ == '__main__':
         run(['make', 'bundle_install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
-        run(['make', 'clean-typecheck'])
-        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-                               'Initial commit from boilerplate'])
+        run(['make', 'build-typecheck'])
+        run(['bundle', 'exec', 'git', 'commit', '-m',
+             'Initial commit from boilerplate'])
+
         parent = os.path.dirname(PROJECT_DIRECTORY)
         run(['gem', 'install', 'rails', '-v', '~> 7.0'],
                               cwd=parent)
@@ -155,22 +156,22 @@ if __name__ == '__main__':
                                    'cookiecutter.type_of_github_repo: '
                                    '{{ cookiecutter.type_of_github_repo }}')
             description = "{{ cookiecutter.project_short_description.replace('\"', '\\\"') }}"
-            # if repo already exists
+            # if repo doesn't already exists
             if subprocess.call(['gh', 'repo', 'view',
                                 '{{ cookiecutter.github_username }}/'
                                 '{{ cookiecutter.project_slug }}']) != 0:
                 run(['gh', 'repo', 'create',
-                                       visibility_flag,
-                                       '--description',
-                                       description,
-                                       '--source',
-                                       '.',
-                                       '{{ cookiecutter.github_username }}/'
-                                       '{{ cookiecutter.project_slug }}'])
+                     visibility_flag,
+                     '--description',
+                     description,
+                     '--source',
+                     '.',
+                     '{{ cookiecutter.github_username }}/'
+                     '{{ cookiecutter.project_slug }}'])
                 run(['gh', 'repo', 'edit',
-                                       '--allow-update-branch',
-                                       '--enable-auto-merge',
-                                       '--delete-branch-on-merge'])
+                     '--allow-update-branch',
+                     '--enable-auto-merge',
+                     '--delete-branch-on-merge'])
             run(['git', 'push'])
             run(['circleci', 'follow'])
             run(['git', 'branch', '--set-upstream-to=origin/main', 'main'])
