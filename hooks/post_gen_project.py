@@ -89,14 +89,14 @@ if __name__ == '__main__':
         run(['make', 'bundle_install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
-        run(['make', 'clean-typecheck'])
+        run(['make', 'build-typecheck'])
         run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-                               'Initial commit from boilerplate'])
+             'Initial commit from boilerplate'])
         parent = os.path.dirname(PROJECT_DIRECTORY)
         run(['gem', 'install', 'rails', '-v', '~> 7.0'],
-                              cwd=parent)
+            cwd=parent)
         run(['rbenv', 'version'],
-                              cwd=parent)
+            cwd=parent)
         run(['rbenv', 'exec', 'rails', 'new',
                                '--database=postgresql',
                                '--skip-test',
