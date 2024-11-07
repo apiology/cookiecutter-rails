@@ -6,6 +6,9 @@ from urllib.parse import urlparse
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
+port_prefix_str = '{{cookiecutter.db_port_prefix}}'
+port_prefix = int(port_prefix_str) * 10
+
 
 def run(*args, **kwargs):
     if len(kwargs) > 0:
@@ -110,8 +113,8 @@ if __name__ == '__main__':
                     master_key = f.read().strip()
                 create_onepass_entry(main_onepass_entry)
                 add_onepass_password_field(main_onepass_entry, master_key, password_field='master key')
-            create_docker_compose_db_onepass_entry('dev', port={{cookiecutter.db_port_prefix}}2) # noqa: E999
-            create_docker_compose_db_onepass_entry('test', port={{cookiecutter.db_port_prefix}}3) # noqa: E999
+            create_docker_compose_db_onepass_entry('dev', port=port_prefix + 2)
+            create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
             create_production_db_onepass_entry()
         run(['make', 'bundle_install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
