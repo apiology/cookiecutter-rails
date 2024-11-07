@@ -79,7 +79,7 @@ commands:
             bundle exec overcommit --sign
             bundle exec overcommit --sign pre-commit
 
-            OVERCOMMIT_DEBUG=true bundle exec overcommit --run
+            bundle exec overcommit --run
   tox:
     description: "Run tox"
     parameters:
