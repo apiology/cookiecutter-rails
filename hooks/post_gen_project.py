@@ -12,7 +12,7 @@ port_prefix = int(port_prefix_str) * 10
 
 def run(*args, **kwargs):
     if len(kwargs) > 0:
-        print('running with kwargs', kwargs, ":", *args, flush=True)
+        print('running with kwargs', kwargs, ':', *args, flush=True)
     else:
         print('running', *args, flush=True)
     # keep both streams in the same place so that we can weave
@@ -31,40 +31,47 @@ def onepass_entry_exists(onepass_entry):
 
 def create_onepass_entry(onepass_entry):
     run(['op', 'item', 'create',
-                           '--category=Login',
-                           f'--title={onepass_entry}'])
+         '--category=Login',
+         f'--title={onepass_entry}'])
+
 
 def add_onepass_password_field(onepass_entry, password, password_field='password'):
-	add_onepass_field(onepass_entry, password_field, password, field_type='password')
+    add_onepass_field(onepass_entry, password_field, password, field_type='password')
+
 
 def add_onepass_field(onepass_entry, field_name, field_value, field_type='string'):
-	run(['op', 'item', 'edit',
-                           onepass_entry,
-                           f"{field_name}[{field_type}]={field_value}"])
+    run(['op', 'item', 'edit',
+         onepass_entry,
+         f'{field_name}[{field_type}]={field_value}'])
 
 
-def create_onepass_db(onepass_entry, password, database, password_field='password', port=5432, server=None):
+def create_onepass_db(onepass_entry, password, database,
+                      password_field='password', port=5432, server=None):
     if not onepass_entry_exists(onepass_entry):
         create_onepass_entry(onepass_entry)
         add_onepass_password_field(onepass_entry, password)
         add_onepass_field(onepass_entry, 'port', port)
-        add_onepass_field(onepass_entry, 'username', "{{ cookiecutter.project_slug.replace('-', '_') }}")
+        add_onepass_field(onepass_entry, 'username',
+                          "{{ cookiecutter.project_slug.replace('-', '_') }}")
         add_onepass_field(onepass_entry, 'database', database)
         if server is not None:
             add_onepass_field(onepass_entry, 'server', server)
 
+
 def random_password():
     return subprocess.check_output(['openssl', 'rand', '-base64', '32']).decode().strip()
 
+
 def create_production_db_onepass_entry():
-    onepass_entry = "{{ cookiecutter.project_slug }} production database"
+    onepass_entry = '{{ cookiecutter.project_slug }} production database'
     if not onepass_entry_exists(onepass_entry):
         create_onepass_entry(onepass_entry)
 
 
 def create_docker_compose_db_onepass_entry(rails_env, port):
-    database = "{{ cookiecutter.project_slug.replace('-', '_') }}_" f"{rails_env}"
-    create_onepass_db('{{ cookiecutter.project_slug }} ' f"local {rails_env} docker-compose database - {database}",
+    database = "{{ cookiecutter.project_slug.replace('-', '_') }}_" f'{rails_env}'
+    create_onepass_db('{{ cookiecutter.project_slug }} '
+                      f'local {rails_env} docker-compose database - {database}',
                       password=random_password(), port=port,
                       server='localhost',
                       database=database)
@@ -98,14 +105,14 @@ if __name__ == '__main__':
 
         parent = os.path.dirname(PROJECT_DIRECTORY)
         run(['gem', 'install', 'rails', '-v', '~> 7.0'],
-                              cwd=parent)
+            cwd=parent)
         run(['rbenv', 'version'],
-                              cwd=parent)
+            cwd=parent)
         run(['rbenv', 'exec', 'rails', 'new',
-                               '--database=postgresql',
-                               '--skip-test',
-                               '--skip',
-                               '{{cookiecutter.project_slug}}'], cwd=parent)
+             '--database=postgresql',
+             '--skip-test',
+             '--skip',
+             '{{cookiecutter.project_slug}}'], cwd=parent)
         if os.environ.get('SKIP_GITHUB_OP_AND_CIRCLECI_CREATION', '0') != '1':
             main_onepass_entry = '{{ cookiecutter.project_name }}'
             if not onepass_entry_exists(main_onepass_entry):
@@ -113,7 +120,9 @@ if __name__ == '__main__':
                 with open(master_key_filename) as f:
                     master_key = f.read().strip()
                 create_onepass_entry(main_onepass_entry)
-                add_onepass_password_field(main_onepass_entry, master_key, password_field='master key')
+                add_onepass_password_field(main_onepass_entry,
+                                           master_key,
+                                           password_field='master key')
             create_docker_compose_db_onepass_entry('dev', port=port_prefix + 2)
             create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
             create_production_db_onepass_entry()
@@ -126,17 +135,20 @@ if __name__ == '__main__':
 
     heroku_app_name = '{{ cookiecutter.project_slug }}'
 
-    if "{{ cookiecutter.deploy_to_heroku }}" == "yes":
+    if '{{ cookiecutter.deploy_to_heroku }}' == 'yes':
         # run "heroku ps" to see if this already exists
         if subprocess.call(['heroku', 'ps', '-a', heroku_app_name]) != 0:
             run(['heroku', 'create'])
         # check for heroku_rediscloud
-        if "{{ cookiecutter.heroku_rediscloud }}" == "yes":
-            if subprocess.call(['heroku', 'config:get', 'REDISCLOUD_URL', '-a', heroku_app_name]) != 0:
+        if '{{ cookiecutter.heroku_rediscloud }}' == 'yes':
+            if subprocess.call(['heroku', 'config:get', 'REDISCLOUD_URL',
+                                '-a', heroku_app_name]) != 0:
                 run(['heroku', 'addons:add', 'rediscloud', '-a', heroku_app_name])
             heroku_entry_name = '{{ cookiecutter.project_name }} redis'
             if not onepass_entry_exists(heroku_entry_name):
-                redis_url = subprocess.check_output(['heroku', 'config:get', 'REDISCLOUD_URL', '-a', heroku_app_name]).decode().strip()
+                redis_url = subprocess.check_output(['heroku', 'config:get',
+                                                     'REDISCLOUD_URL',
+                                                     '-a', heroku_app_name]).decode().strip()
                 # parse redis_url with library
                 parsed_url = urlparse(redis_url)
                 user = parsed_url.username

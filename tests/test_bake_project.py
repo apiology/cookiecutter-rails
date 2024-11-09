@@ -11,8 +11,8 @@ import jinja2
 
 @contextmanager
 def inside_dir(dirpath):
-    """
-    Execute code from inside the given directory
+    """Execute code from inside the given directory
+
     :param dirpath: String, path of the directory the command is being run.
     """
     old_path = os.getcwd()
@@ -37,7 +37,7 @@ def suppressed_github_and_circleci_creation():
 
 def errmsg(exception):
     if isinstance(exception, jinja2.exceptions.TemplateSyntaxError):
-        return f"Found error at {exception.filename}:{exception.lineno}"
+        return f'Found error at {exception.filename}:{exception.lineno}'
     else:
         return str(exception)
 
@@ -72,13 +72,13 @@ def run_inside_dir(command, dirpath):
 
 
 def check_output_inside_dir(command, dirpath):
-    "Run a command from inside a given directory, returning the command output"
+    """Run a command from inside a given directory, returning the command output"""
     with inside_dir(dirpath):
         return subprocess.check_output(shlex.split(command))
 
 
 def project_info(result):
-    """Get toplevel dir, project_slug, and project dir from baked cookies"""
+    """Get toplevel dir, project_slug, and project dir from baked cookies."""
     project_path = str(result.project_path)
     project_slug = os.path.split(project_path)[-1]
     project_dir = os.path.join(project_path, project_slug)
@@ -105,12 +105,12 @@ def test_bake_and_run_build(cookies):
         assert run_inside_dir('make typecheck', str(result.project_path)) == 0
         assert run_inside_dir('make quality', str(result.project_path)) == 0
         # The supplied Makefile does not support win32
-        if sys.platform != "win32":
+        if sys.platform != 'win32':
             output = check_output_inside_dir(
                 'make help',
                 str(result.project_path)
             )
-            assert b"run precommit quality checks" in \
+            assert b'run precommit quality checks' in \
                 output
         license_file_path = result.project_path / 'LICENSE'
         now = datetime.datetime.now()

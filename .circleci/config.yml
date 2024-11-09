@@ -104,7 +104,7 @@ commands:
 
 jobs:
   overcommit:
-    working_directory: ~/cookiecutter-ruby
+    working_directory: ~/cookiecutter-rails
     docker:
       - image: apiology/circleci-python:latest
     steps:
