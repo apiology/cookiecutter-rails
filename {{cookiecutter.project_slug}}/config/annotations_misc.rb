@@ -25,3 +25,11 @@
 #     # @return [Object,nil]
 #     def self.[](key); end
 #   end
+#   module Bundler
+#     class << self
+#       # @param groups [Array<Symbol>]
+#       #
+#       # @return [void]
+#       def require(*groups); end
+#     end
+#   end
