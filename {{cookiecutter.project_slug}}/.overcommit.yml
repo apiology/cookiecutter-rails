@@ -71,6 +71,9 @@ PreCommit:
       - 'config/puma.rb'
       - 'config/routes.rb'
       - 'config/application.rb'
+      - 'config/environments/development.rb'
+      - 'config/environments/production.rb'
+      - 'config/environments/test.rb'
       - 'app/mailers/application_mailer.rb'
       - 'config/importmap.rb'
   Punchlist:
