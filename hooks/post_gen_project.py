@@ -131,7 +131,7 @@ if __name__ == '__main__':
         run(['make', 'bundle_install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
-        run(['make', 'clean-typecheck'])
+        run(['make', 'build-typecheck'])
         run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
                                'rails new'])
 
