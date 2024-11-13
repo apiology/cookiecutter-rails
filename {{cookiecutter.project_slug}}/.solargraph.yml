@@ -11,6 +11,10 @@ exclude:
   - spec/**/*
   - test/**/*
   - config/importmap.rb
+  - 'config/application.rb'
+  - 'config/environments/development.rb'
+  - 'config/environments/production.rb'
+  - 'config/environments/test.rb'
   - config/puma.rb
   - vendor/**/*
   - ".bundle/**/*"
