@@ -129,6 +129,7 @@ if __name__ == '__main__':
             create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
             create_production_db_onepass_entry()
         run(['make', 'bundle_install'])
+        run(['rails', 'g', 'rspec:install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
         run(['make', 'build-typecheck'])
