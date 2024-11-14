@@ -33,7 +33,7 @@ make docker
 
 ## Hitting with curl
 
-Note: Production URL is `TODO`
+Note: Production URL is `${HEROKU_URL}`
 
 ```sh
 curl --verbose --fail http://localhost:3000/whatever
@@ -66,7 +66,7 @@ ngrok http http://localhost:3000 # brew install ngrok/ngrok/ngrok
 # Go to http://127.0.0.1:4040/status or https://dashboard.ngrok.com/cloud-edge/endpoints to get endpoints
 ```
 
-When done, set URL in app components back to `https://TODO/`
+When done, set URL in your dependency to `${HEROKU_URL}`
 
 ## fix.sh
 
