@@ -134,6 +134,7 @@ Style/StringLiterals:
   # diffs with
   Exclude:
     - 'config.ru'
+    - 'Gemfile'
 
 # Solargraph needs to see a class inherited from Struct to recognize
 # what's going on
