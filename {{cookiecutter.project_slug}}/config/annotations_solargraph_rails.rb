@@ -42,7 +42,7 @@
 #   class Rails::Application
 #     # @return [ActionDispatch::Routing::RouteSet]
 #     def routes; end
-#     extend Rails::Application
+#     include Rails::Railtie
 #   end
 #   class ActionDispatch::Routing::RouteSet
 #     # @yieldself [ActionDispatch::Routing::Mapper]

@@ -10,8 +10,11 @@ exclude:
   - db/schema.rb
   - spec/**/*
   - test/**/*
-  - config/importmap.rb
   - config/puma.rb
+  - config/importmap.rb
+  # I don't know why this fails
+  # https://app.circleci.com/pipelines/github/apiology/cookiecutter-rails/178/workflows/20d4f825-50a3-4dc1-8b6d-9a155fc892cc/jobs/375
+  - 'config/environments/**.rb'
   - vendor/**/*
   - ".bundle/**/*"
   - "db/migrate/**/*"

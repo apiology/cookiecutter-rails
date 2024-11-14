@@ -85,7 +85,7 @@ if __name__ == '__main__':
     run('./fix.sh')
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
-        os.environ['SKIP_GITHUB_OP_AND_CIRCLECI_CREATION'] = '1'
+        os.environ['SKIP_EXTERNAL'] = '1'
 
     if os.environ.get('SKIP_GIT_CREATION', '0') != '1':
         # Don't run these non-idempotent things when in
@@ -104,7 +104,9 @@ if __name__ == '__main__':
              'Initial commit from boilerplate'])
 
         parent = os.path.dirname(PROJECT_DIRECTORY)
-        run(['gem', 'install', 'rails', '-v', '~> 7.0'],
+        # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
+        # Make this configurable?
+        run(['gem', 'install', 'rails', '-v', '~> 7.2.1'],
             cwd=parent)
         run(['rbenv', 'version'],
             cwd=parent)
@@ -113,7 +115,7 @@ if __name__ == '__main__':
              '--skip-test',
              '--skip',
              '{{cookiecutter.project_slug}}'], cwd=parent)
-        if os.environ.get('SKIP_GITHUB_OP_AND_CIRCLECI_CREATION', '0') != '1':
+        if os.environ.get('SKIP_EXTERNAL', '0') != '1':
             main_onepass_entry = '{{ cookiecutter.project_name }}'
             if not onepass_entry_exists(main_onepass_entry):
                 master_key_filename = os.path.join(PROJECT_DIRECTORY, 'config/master.key')
@@ -129,38 +131,38 @@ if __name__ == '__main__':
         run(['make', 'bundle_install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
-        run(['make', 'clean-typecheck'])
+        run(['make', 'build-typecheck'])
         run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
                                'rails new'])
 
-    heroku_app_name = '{{ cookiecutter.project_slug }}'
+    if os.environ.get('SKIP_EXTERNAL', '0') != '1':
+        heroku_app_name = '{{ cookiecutter.project_slug }}'
 
-    if '{{ cookiecutter.deploy_to_heroku }}' == 'yes':
-        # run "heroku ps" to see if this already exists
-        if subprocess.call(['heroku', 'ps', '-a', heroku_app_name]) != 0:
-            run(['heroku', 'create'])
-        # check for heroku_rediscloud
-        if '{{ cookiecutter.heroku_rediscloud }}' == 'yes':
-            if subprocess.call(['heroku', 'config:get', 'REDISCLOUD_URL',
-                                '-a', heroku_app_name]) != 0:
-                run(['heroku', 'addons:add', 'rediscloud', '-a', heroku_app_name])
-            heroku_entry_name = '{{ cookiecutter.project_name }} redis'
-            if not onepass_entry_exists(heroku_entry_name):
-                redis_url = subprocess.check_output(['heroku', 'config:get',
-                                                     'REDISCLOUD_URL',
-                                                     '-a', heroku_app_name]).decode().strip()
-                # parse redis_url with library
-                parsed_url = urlparse(redis_url)
-                user = parsed_url.username
-                host = parsed_url.hostname
-                port = parsed_url.port
-                password = parsed_url.password
-                create_onepass_entry(heroku_entry_name)
-                add_onepass_field(heroku_entry_name, 'username', user)
-                add_onepass_field(heroku_entry_name, 'hostname', host)
-                add_onepass_field(heroku_entry_name, 'port', port)
-                add_onepass_password_field(heroku_entry_name, password)
-    if os.environ.get('SKIP_GITHUB_OP_AND_CIRCLECI_CREATION', '0') != '1':
+        if '{{ cookiecutter.deploy_to_heroku }}' == 'yes':
+            # run "heroku ps" to see if this already exists
+            if subprocess.call(['heroku', 'ps', '-a', heroku_app_name]) != 0:
+                run(['heroku', 'create'])
+            # check for heroku_rediscloud
+            if '{{ cookiecutter.heroku_rediscloud }}' == 'yes':
+                if subprocess.call(['heroku', 'config:get', 'REDISCLOUD_URL',
+                                    '-a', heroku_app_name]) != 0:
+                    run(['heroku', 'addons:add', 'rediscloud', '-a', heroku_app_name])
+                heroku_entry_name = '{{ cookiecutter.project_name }} redis'
+                if not onepass_entry_exists(heroku_entry_name):
+                    redis_url = subprocess.check_output(['heroku', 'config:get',
+                                                         'REDISCLOUD_URL',
+                                                         '-a', heroku_app_name]).decode().strip()
+                    # parse redis_url with library
+                    parsed_url = urlparse(redis_url)
+                    user = parsed_url.username
+                    host = parsed_url.hostname
+                    port = parsed_url.port
+                    password = parsed_url.password
+                    create_onepass_entry(heroku_entry_name)
+                    add_onepass_field(heroku_entry_name, 'username', user)
+                    add_onepass_field(heroku_entry_name, 'hostname', host)
+                    add_onepass_field(heroku_entry_name, 'port', port)
+                    add_onepass_password_field(heroku_entry_name, password)
         if 'none' != '{{ cookiecutter.type_of_github_repo }}':
             if 'private' == '{{ cookiecutter.type_of_github_repo }}':
                 visibility_flag = '--private'
