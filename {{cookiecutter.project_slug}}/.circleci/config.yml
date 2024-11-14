@@ -94,8 +94,12 @@ jobs:
     steps:
       - set_up_environment
       - run_with_languages:
-          label: test
-          command: make citest cicoverage
+          label: Test
+          command: |
+            # https://thoughtbot.com/blog/circleci-2-rails
+            # Wait for DB
+            dockerize -wait tcp://localhost:5432 -timeout 1m
+            make citest cicoverage
     # This seemed to shave 5ish% of the build time off when added
     resource_class: large
 
