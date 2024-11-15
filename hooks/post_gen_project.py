@@ -82,6 +82,9 @@ if __name__ == '__main__':
         remove_file('LICENSE')
         remove_file('CONTRIBUTING.rst')
 
+    if 'Yes' != '{{ cookiecutter.use_checkoff }}':
+        remove_file('config/initializers/checkoff.rb')
+
     run('./fix.sh')
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
