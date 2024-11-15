@@ -178,3 +178,4 @@ require:
   - rubocop-rspec
   - rubocop-rails
   - rubocop-rspec_rails
+  - rubocop-performance
