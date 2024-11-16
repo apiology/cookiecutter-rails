@@ -164,11 +164,12 @@ jobs:
     docker:
       - image: apiology/circleci-ruby:latest
         environment:
-          {{cookiecutter.project_slug|upper}}_TEST_DATABASE_DATABASE: {{cookiecutter.project_slug}}_test
-          {{cookiecutter.project_slug|upper}}_DATABASE_USERNAME: {{cookiecutter.project_slug}}
-          {{cookiecutter.project_slug|upper}}_TEST_DATABASE_PASSWORD: ""
-          {{cookiecutter.project_slug|upper}}_TEST_DATABASE_SERVER: localhost
-          {{cookiecutter.project_slug|upper}}_TEST_DATABASE_PORT: "5432"
+          # upper case and replace "-" with "_"
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_DATABASE: {{cookiecutter.project_slug}}_test
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_USERNAME: {{cookiecutter.project_slug}}
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PASSWORD: ""
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_SERVER: localhost
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PORT: "5432"
           RAILS_ENV: test
       # https://thoughtbot.com/blog/circleci-2-rails
       - image: postgres:latest
