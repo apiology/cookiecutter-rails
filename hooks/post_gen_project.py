@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     run('./fix.sh')
     # update frequently security-flagged gems
-    run(['bundle', 'update', '--conservative', 'rexml'])
+    run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'webrick', 'puma', 'nokogiri'])
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
         os.environ['SKIP_EXTERNAL'] = '1'
