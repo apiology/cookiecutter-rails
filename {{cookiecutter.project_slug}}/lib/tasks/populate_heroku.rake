@@ -2,12 +2,14 @@
 
 require 'yaml'
 
+# @return [Array<String>]
 def pull_vars
   Dir.glob("#{task.application.original_dir}/config/env{,.aws,.rails,.prod}.1p").flat_map do |filename|
     File.readlines(filename).reject { |line| line.start_with? '#' }.map { |line| line.split('=').first }
   end
 end
 
+# @return [Hash{String => String}]
 def pull_vars_and_values
   heroku_only = {
     # https://medium.com/klaxit-techblog/tracking-a-ruby-memory-leak-in-2021-9eb56575f731
