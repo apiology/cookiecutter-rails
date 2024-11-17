@@ -87,7 +87,6 @@ if __name__ == '__main__':
 
     run('./fix.sh')
     # update frequently security-flagged gems
-    run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'webrick', 'puma', 'nokogiri'])
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
         os.environ['SKIP_EXTERNAL'] = '1'
@@ -120,6 +119,7 @@ if __name__ == '__main__':
              '--skip-test',
              '--skip',
              '{{cookiecutter.project_slug}}'], cwd=parent)
+        run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'webrick', 'puma', 'nokogiri'])
         if os.environ.get('SKIP_EXTERNAL', '0') != '1':
             main_onepass_entry = '{{ cookiecutter.project_name }}'
             if not onepass_entry_exists(main_onepass_entry):
