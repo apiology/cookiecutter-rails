@@ -9,7 +9,8 @@ def pull_vars
   end
 end
 
-# @return [Hash{String => String}]
+# @sg-ignore
+# @return [Hash{String => Object}]
 def pull_vars_and_values
   heroku_only = {
     # https://medium.com/klaxit-techblog/tracking-a-ruby-memory-leak-in-2021-9eb56575f731
