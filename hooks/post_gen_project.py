@@ -96,52 +96,52 @@ if __name__ == '__main__':
         # cookiecutter_project_upgrader, which will run this hook
         # multiple times over its lifetime.
         run(['git', 'init'])
-        run(['git', 'add', '-A'])
-        run(['bundle', 'exec', 'overcommit', '--install'])
-        run(['bundle', 'exec', 'overcommit', '--sign'])
-        run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
-        run(['make', 'bundle_install'])
-        run(['bundle', 'exec', 'rubocop', '-A'])
-        run(['git', 'add', '-A'])
-        run(['make', 'build-typecheck'])
-        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-             'Initial commit from boilerplate'])
+    run(['git', 'add', '-A'])
+    run(['bundle', 'exec', 'overcommit', '--install'])
+    run(['bundle', 'exec', 'overcommit', '--sign'])
+    run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
+    run(['make', 'bundle_install'])
+    run(['bundle', 'exec', 'rubocop', '-A'])
+    run(['git', 'add', '-A'])
+    run(['make', 'build-typecheck'])
+    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+         'Initial commit from boilerplate'])
 
-        parent = os.path.dirname(PROJECT_DIRECTORY)
-        # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
-        # Make this configurable?
-        run(['gem', 'install', 'rails', '-v', '~> 7.2.1'],
-            cwd=parent)
-        run(['rbenv', 'version'],
-            cwd=parent)
-        run(['rbenv', 'exec', 'rails', 'new',
-             '--database=postgresql',
-             '--skip-test',
-             '--skip',
-             '{{cookiecutter.project_slug}}'], cwd=parent)
-        if os.environ.get('SKIP_EXTERNAL', '0') != '1':
-            main_onepass_entry = '{{ cookiecutter.project_name }}'
-            if not onepass_entry_exists(main_onepass_entry):
-                master_key_filename = os.path.join(PROJECT_DIRECTORY, 'config/master.key')
-                with open(master_key_filename) as f:
-                    master_key = f.read().strip()
+    parent = os.path.dirname(PROJECT_DIRECTORY)
+    # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
+    # Make this configurable?
+    run(['gem', 'install', 'rails', '-v', '~> 7.2.1'],
+        cwd=parent)
+    run(['rbenv', 'version'],
+        cwd=parent)
+    run(['rbenv', 'exec', 'rails', 'new',
+         '--database=postgresql',
+         '--skip-test',
+         '--skip',
+         '{{cookiecutter.project_slug}}'], cwd=parent)
+    if os.environ.get('SKIP_EXTERNAL', '0') != '1':
+        main_onepass_entry = '{{ cookiecutter.project_name }}'
+        if not onepass_entry_exists(main_onepass_entry):
+            master_key_filename = os.path.join(PROJECT_DIRECTORY, 'config/master.key')
+            with open(master_key_filename) as f:
+                master_key = f.read().strip()
                 create_onepass_entry(main_onepass_entry)
                 add_onepass_password_field(main_onepass_entry,
                                            master_key,
                                            password_field='master key')
-            create_docker_compose_db_onepass_entry('dev', port=port_prefix + 2)
-            create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
-            create_production_db_onepass_entry()
-        run(['make', 'bundle_install'])
-        run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'puma', 'nokogiri'])
-        run(['rails', 'g', 'rspec:install'])
-        run(['rails', 'importmap:install'])
-        run(['rails', 'g', 'annotate:install'])
-        run(['bundle', 'exec', 'rubocop', '-A'])
-        run(['git', 'add', '-A'])
-        run(['make', 'build-typecheck'])
-        run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-                               'rails new'])
+        create_docker_compose_db_onepass_entry('dev', port=port_prefix + 2)
+        create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
+        create_production_db_onepass_entry()
+    run(['make', 'bundle_install'])
+    run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'puma', 'nokogiri'])
+    run(['rails', 'g', 'rspec:install'])
+    run(['rails', 'importmap:install'])
+    run(['rails', 'g', 'annotate:install'])
+    run(['bundle', 'exec', 'rubocop', '-A'])
+    run(['git', 'add', '-A'])
+    run(['make', 'build-typecheck'])
+    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+         'rails new'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         heroku_app_name = '{{ cookiecutter.project_slug }}'
