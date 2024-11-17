@@ -135,6 +135,7 @@ if __name__ == '__main__':
             create_production_db_onepass_entry()
         run(['make', 'bundle_install'])
         run(['rails', 'g', 'rspec:install'])
+        run(['rails', 'importmap:install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
         run(['make', 'build-typecheck'])
