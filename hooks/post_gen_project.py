@@ -119,7 +119,6 @@ if __name__ == '__main__':
              '--skip-test',
              '--skip',
              '{{cookiecutter.project_slug}}'], cwd=parent)
-        run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'webrick', 'puma', 'nokogiri'])
         if os.environ.get('SKIP_EXTERNAL', '0') != '1':
             main_onepass_entry = '{{ cookiecutter.project_name }}'
             if not onepass_entry_exists(main_onepass_entry):
@@ -134,6 +133,7 @@ if __name__ == '__main__':
             create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
             create_production_db_onepass_entry()
         run(['make', 'bundle_install'])
+        run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'puma', 'nokogiri'])
         run(['rails', 'g', 'rspec:install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
