@@ -90,6 +90,7 @@ if __name__ == '__main__':
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
         os.environ['SKIP_EXTERNAL'] = '1'
+        os.environ['SKIP_RAILS_NEW'] = '1'
 
     if os.environ.get('SKIP_GIT_CREATION', '0') != '1':
         # Don't run these non-idempotent things when in
@@ -114,11 +115,12 @@ if __name__ == '__main__':
         cwd=parent)
     run(['rbenv', 'version'],
         cwd=parent)
-    run(['rbenv', 'exec', 'rails', 'new',
-         '--database=postgresql',
-         '--skip-test',
-         '--skip',
-         '{{cookiecutter.project_slug}}'], cwd=parent)
+    if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
+        run(['rbenv', 'exec', 'rails', 'new',
+             '--database=postgresql',
+             '--skip-test',
+             '--skip',
+             '{{cookiecutter.project_slug}}'], cwd=parent)
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
         if not onepass_entry_exists(main_onepass_entry):
