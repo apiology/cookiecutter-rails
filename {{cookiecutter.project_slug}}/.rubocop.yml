@@ -1,11 +1,28 @@
 ---
 inherit_from: .rubocop_todo.yml
 
+Layout/HashAlignment:
+  Exclude:
+    # generated
+    - lib/tasks/auto_annotate_models.rake
+
 Layout/LineLength:
   Max: 120
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'Gemfile'
+
+Layout/SpaceInsidePercentLiteralDelimiters:
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'Gemfile'
 
 Lint/EmptyClass:
   # some workarounds for circular dependencies require empty classes
@@ -72,6 +89,7 @@ Rails/RakeEnvironment:
     - 'lib/tasks/overcommit.rake'
     - 'lib/tasks/populate_heroku.rake'
     - 'lib/tasks/undercover.rake'
+    - 'lib/tasks/auto_annotate_models.rake'
 
 
 # http://www.betterspecs.org/#single
@@ -177,6 +195,7 @@ Style/FrozenStringLiteralComment:
   # diffs with
   Exclude:
     - 'config.ru'
+    - 'lib/tasks/auto_annotate_models.rake'
 
 require:
   - rubocop-rake
