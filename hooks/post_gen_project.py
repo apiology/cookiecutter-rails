@@ -136,6 +136,7 @@ if __name__ == '__main__':
         run(['make', 'bundle_install'])
         run(['rails', 'g', 'rspec:install'])
         run(['rails', 'importmap:install'])
+        run(['rails', 'g', 'annotate:install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
         run(['git', 'add', '-A'])
         run(['make', 'build-typecheck'])
