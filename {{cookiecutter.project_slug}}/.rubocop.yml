@@ -58,6 +58,11 @@ Naming/VariableNumber:
   Enabled: true
   EnforcedStyle: snake_case
 
+Rake/Desc:
+  Exclude:
+    # generated
+    - 'lib/tasks/auto_annotate_models.rake'
+
 # These don't need it, but I'd still like a reminder on new rake tasks
 # on why the stupid thing isn't working.
 Rails/RakeEnvironment:
