@@ -87,7 +87,6 @@ if __name__ == '__main__':
 
     run('./fix.sh')
     # update frequently security-flagged gems
-    run(['bundle', 'update', '--conservative', 'rexml'])
     if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
         os.environ['SKIP_GIT_CREATION'] = '1'
         os.environ['SKIP_EXTERNAL'] = '1'
@@ -134,6 +133,7 @@ if __name__ == '__main__':
             create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
             create_production_db_onepass_entry()
         run(['make', 'bundle_install'])
+        run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'puma', 'nokogiri'])
         run(['rails', 'g', 'rspec:install'])
         run(['rails', 'importmap:install'])
         run(['bundle', 'exec', 'rubocop', '-A'])
