@@ -24,6 +24,13 @@ Layout/SpaceInsidePercentLiteralDelimiters:
   Exclude:
     - 'Gemfile'
 
+Layout/EmptyLinesAroundExceptionHandlingKeywords:
+  # Adjust style to match what 'rails g rspec:install' will show the fewest
+  # diffs with
+  Exclude:
+    - 'spec/spec_helper.rb'
+    - 'db/seeds.rb'
+
 Lint/EmptyClass:
   # some workarounds for circular dependencies require empty classes
   AllowComments: true
@@ -123,6 +130,12 @@ RSpec/VerifiedDoubleReference:
   Enabled: true
   EnforcedStyle: constant
 
+Style/BlockComments:
+  # Adjust style to match what 'rails g rspec:install' will show the fewest
+  # diffs with
+  Exclude:
+    - 'spec/spec_helper.rb'
+
 #
 # Add 'XX X' to the standard list
 #
@@ -147,6 +160,12 @@ Style/DocumentationMethod:
     - 'lib/{{cookiecutter.project_slug}}/*.rb'
     - 'app/**/*.rb'
 
+Style/PercentLiteralDelimiters:
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'config/application.rb'
+
 Style/StringLiterals:
   EnforcedStyle: single_quotes
   SupportedStyles:
@@ -158,6 +177,7 @@ Style/StringLiterals:
   Exclude:
     - 'config.ru'
     - 'Gemfile'
+    - 'spec/rails_helper.rb'
 
 # Solargraph needs to see a class inherited from Struct to recognize
 # what's going on
@@ -168,6 +188,10 @@ Style/StructInheritance:
 # elements and see them as one line in a diff, not two.
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
+  # Adjust style to match what 'rails app:update' will show the fewest
+  # diffs with
+  Exclude:
+    - 'spec/rails_helper.rb'
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
@@ -189,6 +213,7 @@ AllCops:
     - 'vendor/**/*'
     - 'db/migrate/**/*.rb'
     - 'db/schema.rb'
+    - 'lib/tasks/auto_annotate_models.rake'
 
 Style/FrozenStringLiteralComment:
   # Adjust style to match what 'rails app:update' will show the fewest
