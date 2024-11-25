@@ -77,6 +77,7 @@ PreCommit:
     exclude:
       # vendored
       - 'bin/bundle'
+      - 'bin/setup'
       - "db/migrate/**/*"
       - db/schema.rb
       - 'config/puma.rb'
