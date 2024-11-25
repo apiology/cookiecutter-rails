@@ -10,6 +10,8 @@ include:
   - "bin/*"
   - "bin/overcommit_branch"
 exclude:
+  # vendored
+  - 'bin/bundle'
   - "db/migrate/**/*"
   - db/schema.rb
   - 'config/puma.rb'
