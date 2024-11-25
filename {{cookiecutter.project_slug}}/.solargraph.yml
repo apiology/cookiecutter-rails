@@ -3,21 +3,26 @@ include:
   # process first
   - "config/annotations*.rb"
   - "**/*.rb"
+  - "**/.*.rb"
   - "lib/tasks/*.rake"
   - ".git-hooks/**/*.rb"
   - "script/*"
+  - "bin/*"
+  - "bin/overcommit_branch"
 exclude:
+  - "db/migrate/**/*"
   - db/schema.rb
-  - spec/**/*
-  - test/**/*
-  - config/puma.rb
-  - config/importmap.rb
+  - 'config/puma.rb'
+  - 'config/routes.rb'
+  - 'config/importmap.rb'
   # I don't know why this fails
   # https://app.circleci.com/pipelines/github/apiology/cookiecutter-rails/178/workflows/20d4f825-50a3-4dc1-8b6d-9a155fc892cc/jobs/375
   - 'config/environments/**.rb'
+  - script/.rubocop.yml
   - vendor/**/*
+  - spec/**/*
   - ".bundle/**/*"
-  - "db/migrate/**/*"
+  - ".markdownlint_style.rb"
 require: []
 domains: []
 reporters:
