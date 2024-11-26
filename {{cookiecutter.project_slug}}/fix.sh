@@ -1,10 +1,16 @@
 #!/bin/bash -eu
 
-if [ ! -z "$FIX_SH_TIMING_LOG" ]; then
-  _lastcmd=$(date +%s)
-  rm -f "${FIX_SH_TIMING_LOG}"
-  trap '_now=$(date +%s); duration=$((_now - _lastcmd)); echo $duration secs: $BASH_COMMAND >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
-fi
+debug_timing() {
+  if [ -n "$FIX_SH_TIMING_LOG" ]; then
+    _lastcmd=$(date +%s)
+    rm -f "${FIX_SH_TIMING_LOG}"
+    # shellcheck disable=SC2154
+    trap '_now=$(date +%s); duration=$((_now - _lastcmd)); echo ${duration} secs: $BASH_COMMAND >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
+  fi
+}
+
+# copy this into any function you want to debug further
+debug_timing
 
 set -o pipefail
 
@@ -256,6 +262,7 @@ set_pyenv_env_variables() {
 }
 
 ensure_pyenv() {
+  debug_timing
   if ! type pyenv >/dev/null 2>&1 && ! [ -f "${HOME}/.pyenv/bin/pyenv" ]
   then
     install_pyenv
