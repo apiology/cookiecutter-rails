@@ -13,6 +13,7 @@ exclude:
   # vendored
   - 'bin/bundle'
   - 'bin/setup'
+  - 'bin/brakeman'
   - "db/migrate/**/*"
   - db/schema.rb
   - 'config/puma.rb'
