@@ -152,9 +152,10 @@ jobs:
                   bundle exec overcommit --sign
                   bundle exec overcommit --sign pre-commit
 
+                  export FIX_SH_TIMING_LOG=/tmp/fix_sh_timing.log # TODO
                   make citest cicoverage
             - store_artifacts:
-                path: /tmp/test.log
+                path: /tmp/fix_sh_timing.log
             - save_cache:
                 key: child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
                 paths:

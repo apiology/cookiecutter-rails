@@ -1,5 +1,11 @@
 #!/bin/bash -eu
 
+if [ ! -z "$FIX_SH_TIMING_LOG" ]; then
+  _lastcmd=$(date +%s)
+  rm -f "${FIX_SH_TIMING_LOG}"
+  trap '_now=$(date +%s); duration=$((_now - _lastcmd)); echo $duration secs: $BASH_COMMAND >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
+fi
+
 set -o pipefail
 
 apt_upgraded=0
