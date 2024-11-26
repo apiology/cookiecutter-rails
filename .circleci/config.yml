@@ -137,7 +137,7 @@ jobs:
             # virtualenv, and only run in default Python version.
             - restore_cache:
                 keys:
-                  child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
+                  - child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
                   - child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
                   - child-gems-v3-
                   - child-gems-
