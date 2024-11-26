@@ -1,9 +1,13 @@
 #!/bin/bash -eu
 
+if [ -n "$FIX_SH_TIMING_LOG" ]; then
+    rm -f "${FIX_SH_TIMING_LOG}"
+fi
+
 debug_timing() {
   if [ -n "$FIX_SH_TIMING_LOG" ]; then
+    # shellcheck disable=SC2034
     _lastcmd=$(date +%s)
-    rm -f "${FIX_SH_TIMING_LOG}"
     # shellcheck disable=SC2154
     trap '_now=$(date +%s); duration=$((_now - _lastcmd)); echo ${duration} secs: $BASH_COMMAND >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
   fi
@@ -361,6 +365,7 @@ ensure_pyenv_virtualenvs() {
 }
 
 ensure_pip_and_wheel() {
+  debug_timing
   # https://cve.mitre.org/cgi-bin/cvename.cgi?name=2023-5752
   major_pip_version=$(pip --version | cut -d' ' -f2 | cut -d '.' -f 1)
   minor_pip_version=$(pip --version | cut -d' ' -f2 | cut -d '.' -f 2)
