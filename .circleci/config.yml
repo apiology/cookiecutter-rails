@@ -153,6 +153,8 @@ jobs:
                   bundle exec overcommit --sign pre-commit
 
                   make citest cicoverage
+            - store_artifacts:
+              path: /tmp/test.log
             - save_cache:
                 key: child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
                 paths:
