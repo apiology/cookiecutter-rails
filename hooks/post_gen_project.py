@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import tempfile
 from urllib.parse import urlparse
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
@@ -116,11 +117,18 @@ if __name__ == '__main__':
     run(['rbenv', 'version'],
         cwd=parent)
     if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
-        run(['rbenv', 'exec', 'rails', 'new',
-             '--database=postgresql',
-             '--skip-test',
-             '--skip',
-             '{{cookiecutter.project_slug}}'], cwd=parent)
+        # with a temporary directory
+        with tempfile.TemporaryDirectory() as tempdir:
+            run(['rbenv', 'exec', 'rails', 'new',
+                 '--database=postgresql',
+                 '--skip-test',
+                 '--skip',
+                 '{{cookiecutter.project_slug}}'], cwd=tempdir)
+            run(['mv', os.path.join(tempdir, '{{cookiecutter.project_slug}}'),
+                 PROJECT_DIRECTORY])
+            # copy artifacts back
+            run(['cp', '-Rn', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
+                 PROJECT_DIRECTORY])
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
         if not onepass_entry_exists(main_onepass_entry):
