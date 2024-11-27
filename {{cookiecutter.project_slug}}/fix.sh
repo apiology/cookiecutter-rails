@@ -1,11 +1,11 @@
 #!/bin/bash -eu
 
-if [ -n "$FIX_SH_TIMING_LOG" ]; then
+if [ -n "${FIX_SH_TIMING_LOG+x}" ]; then
     rm -f "${FIX_SH_TIMING_LOG}"
 fi
 
 debug_timing() {
-  if [ -n "$FIX_SH_TIMING_LOG" ]; then
+  if [ -n "${FIX_SH_TIMING_LOG+x}" ]; then
     # shellcheck disable=SC2034
     _lastcmd=$(ruby -e "puts (Time.now.to_f * 1000).to_i")
     last_command='start'
@@ -116,12 +116,9 @@ ensure_dev_library() {
 }
 
 ensure_binary_library() {
-  debug_timing
-
   library_base_name=${1:?library base name - like libfoo}
   homebrew_package=${2:?homebrew package}
   apt_package=${3:-${homebrew_package}}
-  set -x
   if ! [ -f /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/"${library_base_name}*.dylib" ] && \
       ! [ -f /opt/homebrew/lib/"${library_base_name}*.dylib" ] && \
       ! [ -f /usr/lib/"${library_base_name}.so" ] && \
@@ -134,7 +131,6 @@ ensure_binary_library() {
         install_package "${homebrew_package}" "${apt_package}"
       fi
   fi
-  set +x
 }
 
 ensure_ruby_build_requirements() {
@@ -322,7 +318,6 @@ ensure_package() {
   then
     install_package "${homebrew_package}" "${apt_package}"
   fi
-
 }
 
 install_package() {
@@ -458,7 +453,6 @@ ensure_overcommit() {
 }
 
 ensure_rugged_packages_installed() {
-  debug_timing
   ensure_binary_library libicuio icu4c libicu-dev # needed by rugged, needed by undercover
   ensure_package pkg-config # needed by rugged, needed by undercover
   ensure_package cmake # needed by rugged, needed by undercover
