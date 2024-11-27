@@ -126,12 +126,12 @@ ensure_latest_ruby_build_definitions() {
   debug_timing
   ensure_rbenv
 
-  last_pulled_unix_epoch="$(stat -f '%m' "$(rbenv root)"/plugins/ruby-build/.git/FETCH_HEAD)"
-  # if not pulled in last 24 hours
-  if [ $(( $(date +%s) - last_pulled_unix_epoch )) -gt $(( 24 * 60 * 60 )) ]
-  then
+#  last_pulled_unix_epoch="$(stat -f '%m' "$(rbenv root)"/plugins/ruby-build/.git/FETCH_HEAD)"
+#  # if not pulled in last 24 hours
+#  if [ $(( $(date +%s) - last_pulled_unix_epoch )) -gt $(( 24 * 60 * 60 )) ]
+#  then
       git -C "$(rbenv root)"/plugins/ruby-build pull
-  fi
+#  fi
 }
 
 # You can find out which feature versions are still supported / have
