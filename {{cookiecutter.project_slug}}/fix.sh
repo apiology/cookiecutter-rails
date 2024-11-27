@@ -405,9 +405,15 @@ ensure_pyenv_virtualenvs() {
   debug_timing
   latest_python_version="$(cut -d' ' -f1 <<< "${python_versions}")"
   virtualenv_name="{{cookiecutter.project_slug}}-${latest_python_version}"
-  pyenv virtualenv "${latest_python_version}" "${virtualenv_name}" || true
+  if ! [ -d ~/".pyenv/versions/${virtualenv_name}" ]
+  then
+    pyenv virtualenv "${latest_python_version}" "${virtualenv_name}" || true
+  fi
   # You can use this for your global stuff!
-  pyenv virtualenv "${latest_python_version}" mylibs || true
+  if ! [ -d ~/".pyenv/versions/mylibs" ]
+  then
+    pyenv virtualenv "${latest_python_version}" mylibs || true
+  fi
   # shellcheck disable=SC2086
   pyenv local "${virtualenv_name}" ${python_versions} mylibs
 }
