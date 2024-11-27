@@ -52,7 +52,7 @@ commands:
       - run:
           name: Initialize packages
           command: |
-            export BUNDLE_PATH=vendor/bundle
+            export BUNDLE_PATH="$(pwd)/vendor/bundle"
             './fix.sh'
       - run:
           name: Verify Gemfile.lock
@@ -137,9 +137,9 @@ jobs:
             # virtualenv, and only run in default Python version.
             - restore_cache:
                 keys:
-                  - child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
-                  - child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
-                  - child-gems-v3-
+                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
+                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
+                  - child-gems-v4-
                   - child-gems-
             - run_with_languages:
                 label: Test
@@ -157,7 +157,7 @@ jobs:
             - store_artifacts:
                 path: /tmp/fix_sh_timing.log
             - save_cache:
-                key: child-gems-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
+                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }}
                 paths:
                   - "vendor/bundle"
                   - ".yardoc"
