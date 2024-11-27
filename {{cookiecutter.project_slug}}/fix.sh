@@ -116,6 +116,8 @@ ensure_dev_library() {
 }
 
 ensure_binary_library() {
+  debug_timing
+
   library_base_name=${1:?library base name - like libfoo}
   homebrew_package=${2:?homebrew package}
   apt_package=${3:-${homebrew_package}}
@@ -400,6 +402,7 @@ ensure_python_versions() {
 }
 
 ensure_pyenv_virtualenvs() {
+  debug_timing
   latest_python_version="$(cut -d' ' -f1 <<< "${python_versions}")"
   virtualenv_name="{{cookiecutter.project_slug}}-${latest_python_version}"
   pyenv virtualenv "${latest_python_version}" "${virtualenv_name}" || true
