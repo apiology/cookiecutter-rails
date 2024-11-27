@@ -25,8 +25,6 @@ commands:
             # keep this in a single place for both main and child builds for cachability
             export BUNDLE_PATH="$(pwd)/vendor/bundle"
 
-            gem env # TODO remove me
-
             <<parameters.command>>
           environment:
             # https://app.circleci.com/pipelines/github/apiology/cookiecutter-pypackage/4/workflows/29074dc8-944c-4600-8aaa-5116575fed90/jobs/4
@@ -39,7 +37,6 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - gems-v3-{{ checksum "Gemfile.lock" }}-{{ checksum "/tmp/.ruby-version" }}
             - gems-v3-{{ checksum "Gemfile.lock" }}-
             - gems-v3-
             - gems-
