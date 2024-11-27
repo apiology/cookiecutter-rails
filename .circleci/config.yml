@@ -37,8 +37,8 @@ commands:
       - checkout
       - restore_cache:
           keys:
-            - gems-v2-{{ checksum "Gemfile.lock" }}
-            - gems-v2-
+            - gems-v3-{{ checksum "Gemfile.lock" }}-
+            - gems-v3-
             - gems-
       - restore_cache:
           keys:
@@ -49,8 +49,15 @@ commands:
       - run:
           name: Initialize packages
           command: |
-            export BUNDLE_PATH=vendor/bundle
+            # measuring slows down the script - only enable when you
+            # want to debug where this is spending time
+
+            # export FIX_SH_TIMING_LOG=/tmp/fix_sh_timing.log
+
+            export BUNDLE_PATH="$(pwd)/vendor/bundle"
             './fix.sh'
+      - store_artifacts:
+          path: /tmp/fix_sh_timing.log
       - run:
           name: Verify Gemfile.lock
           command: |
@@ -60,9 +67,10 @@ commands:
               exit 1
             fi
       - save_cache:
-          key: gems-v2-{{ checksum "Gemfile.lock" }}
+          key: gems-v3-{{ checksum "Gemfile.lock" }}-{{ checksum ".ruby-version" }}
           paths:
             - "vendor/bundle"
+            - ".yardoc"
       - save_cache:
           key: wheels-v1-3.12.1-{{ checksum "requirements_dev.txt" }}
           paths:
@@ -133,8 +141,8 @@ jobs:
             # virtualenv, and only run in default Python version.
             - restore_cache:
                 keys:
-                  - child-gems-v2-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}
-                  - child-gems-v2-
+                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
+                  - child-gems-v4-
                   - child-gems-
             - run_with_languages:
                 label: Test
@@ -147,13 +155,21 @@ jobs:
                   bundle exec overcommit --sign
                   bundle exec overcommit --sign pre-commit
 
+                  # measuring slows down the script - only enable when you
+                  # want to debug where this is spending time
+
+                  # export FIX_SH_TIMING_LOG=/tmp/child_fix_sh_timing.log
+
                   make citest cicoverage
+            - store_artifacts:
+                path: /tmp/child_fix_sh_timing.log
             - save_cache:
-                key: child-gems-v2-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}
+                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }} # yamllint disable-line rule:line-length
                 paths:
                   - "vendor/bundle"
                   - ".yardoc"
                   - "/home/circleci/.cache/solargraph"
+                  - "/home/circleci/.rbenv/versions"
       - when:
           condition:
             equal: [<< pipeline.git.branch >>, "main"]
