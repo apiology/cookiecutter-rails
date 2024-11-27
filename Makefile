@@ -82,7 +82,7 @@ test-all: ## run tests on every Python version with tox
 	tox
 
 test: ## run tests quickly
-	pytest --maxfail=0 --log-file /tmp/test.log
+	pytest --maxfail=0
 
 citest: test ## Run unit tests from CircleCI
 
