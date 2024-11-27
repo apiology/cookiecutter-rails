@@ -115,6 +115,26 @@ ensure_dev_library() {
   fi
 }
 
+ensure_binary_library() {
+  library_base_name=${1:?library base name - like libfoo}
+  homebrew_package=${2:?homebrew package}
+  apt_package=${3:-${homebrew_package}}
+  set -x
+  if ! [ -f /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/"${library_base_name}*.dylib" ] && \
+      ! [ -f /opt/homebrew/lib/"${library_base_name}*.dylib" ] && \
+      ! [ -f /usr/lib/"${library_base_name}.so" ] && \
+      ! [ -f /usr/lib/x86_64-linux-gnu/"${library_base_name}.so" ] && \
+      ! [ -f /usr/local/lib/"${library_base_name}.so" ] && \
+      ! [ -f /usr/local/opt/"${homebrew_package}/lib/${library_base_name}*.dylib" ]
+  then
+      if ! compgen -G "/opt/homebrew/Cellar/${homebrew_package}"*/*/"lib/${library_base_name}"*.dylib
+      then
+        install_package "${homebrew_package}" "${apt_package}"
+      fi
+  fi
+  set +x
+}
+
 ensure_ruby_build_requirements() {
   ensure_dev_library readline/readline.h readline libreadline-dev
   ensure_dev_library zlib.h zlib zlib1g-dev
@@ -430,7 +450,7 @@ ensure_overcommit() {
 
 ensure_rugged_packages_installed() {
   debug_timing
-  ensure_package icu4c libicu-dev pkgdata # needed by rugged, needed by undercover
+  ensure_binary_library libicuio icu4c libicu-dev # needed by rugged, needed by undercover
   ensure_package pkg-config # needed by rugged, needed by undercover
   ensure_package cmake # needed by rugged, needed by undercover
 }
