@@ -458,10 +458,7 @@ set_ruby_local_version
 
 ensure_rugged_packages_installed
 
-echo "Ensuring pg gem"
-date
 ensure_pg_gem
-date
 
 ensure_bundle
 
