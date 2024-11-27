@@ -141,7 +141,6 @@ ensure_ruby_build_requirements() {
 }
 
 ensure_latest_ruby_build_definitions() {
-  debug_timing
   ensure_rbenv
 
 #  last_pulled_unix_epoch="$(stat -f '%m' "$(rbenv root)"/plugins/ruby-build/.git/FETCH_HEAD)"
@@ -155,7 +154,6 @@ ensure_latest_ruby_build_definitions() {
 # You can find out which feature versions are still supported / have
 # been release here: https://www.ruby-lang.org/en/downloads/
 ensure_ruby_versions() {
-  debug_timing
   ensure_latest_ruby_build_definitions
 
   # You can find out which feature versions are still supported / have
@@ -174,21 +172,17 @@ ensure_ruby_versions() {
 }
 
 ensure_pg_gem() {
-  debug_timing
   # Find pg_config
   for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config
   do
-    debug_timing
     if [ -f "${possible_pg_config_path}" ]
     then
-      debug_timing
       bundle config set build.pg --with-pg-config="${possible_pg_config_path}"
     fi
   done
 }
 
 ensure_bundle() {
-  debug_timing
   # Not sure why this is needed a second time, but it seems to be?
   #
   # https://app.circleci.com/pipelines/github/apiology/source_finder/21/workflows/88db659f-a4f4-4751-abc0-46f5929d8e58/jobs/107
@@ -246,7 +240,6 @@ ensure_bundle() {
 }
 
 set_ruby_local_version() {
-  debug_timing
   latest_ruby_version="$(cut -d' ' -f1 <<< "${ruby_versions}")"
   echo "${latest_ruby_version}" > .ruby-version
 }
@@ -294,7 +287,6 @@ set_pyenv_env_variables() {
 }
 
 ensure_pyenv() {
-  debug_timing
   if ! type pyenv >/dev/null 2>&1 && ! [ -f "${HOME}/.pyenv/bin/pyenv" ]
   then
     install_pyenv
@@ -397,7 +389,6 @@ ensure_python_versions() {
 }
 
 ensure_pyenv_virtualenvs() {
-  debug_timing
   latest_python_version="$(cut -d' ' -f1 <<< "${python_versions}")"
   virtualenv_name="{{cookiecutter.project_slug}}-${latest_python_version}"
   if ! [ -d ~/".pyenv/versions/${virtualenv_name}" ]
@@ -414,7 +405,6 @@ ensure_pyenv_virtualenvs() {
 }
 
 ensure_pip_and_wheel() {
-  debug_timing
   # https://cve.mitre.org/cgi-bin/cvename.cgi?name=2023-5752
   major_pip_version=$(pip --version | cut -d' ' -f2 | cut -d '.' -f 1)
   minor_pip_version=$(pip --version | cut -d' ' -f2 | cut -d '.' -f 2)
