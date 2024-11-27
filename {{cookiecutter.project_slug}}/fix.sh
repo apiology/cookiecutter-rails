@@ -7,9 +7,10 @@ fi
 debug_timing() {
   if [ -n "$FIX_SH_TIMING_LOG" ]; then
     # shellcheck disable=SC2034
-    _lastcmd=$(date +%s)
+    _lastcmd=$(ruby -e "puts (Time.now.to_f * 1000).to_i")
+    last_command='start'
     # shellcheck disable=SC2154
-    trap '_now=$(date +%s); duration=$((_now - _lastcmd)); echo ${duration} secs: $BASH_COMMAND >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
+    trap '_now=$(ruby -e "puts (Time.now.to_f * 1000).to_i"); duration=$((_now - _lastcmd)); echo ${duration} ms: $last_command >> '"${FIX_SH_TIMING_LOG}"'; last_command="$BASH_COMMAND" >> '"${FIX_SH_TIMING_LOG}"'; _lastcmd=$_now' DEBUG
   fi
 }
 
@@ -122,14 +123,21 @@ ensure_ruby_build_requirements() {
 }
 
 ensure_latest_ruby_build_definitions() {
+  debug_timing
   ensure_rbenv
 
-  git -C "$(rbenv root)"/plugins/ruby-build pull
+  last_pulled_unix_epoch="$(stat -f '%m' "$(rbenv root)"/plugins/ruby-build/.git/FETCH_HEAD)"
+  # if not pulled in last 24 hours
+  if [ $(( $(date +%s) - last_pulled_unix_epoch )) -gt $(( 24 * 60 * 60 )) ]
+  then
+      git -C "$(rbenv root)"/plugins/ruby-build pull
+  fi
 }
 
 # You can find out which feature versions are still supported / have
 # been release here: https://www.ruby-lang.org/en/downloads/
 ensure_ruby_versions() {
+  debug_timing
   ensure_latest_ruby_build_definitions
 
   # You can find out which feature versions are still supported / have
@@ -148,11 +156,14 @@ ensure_ruby_versions() {
 }
 
 ensure_pg_gem() {
+  debug_timing
   # Find pg_config
   for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config
   do
+    debug_timing
     if [ -f "${possible_pg_config_path}" ]
     then
+      debug_timing
       bundle config set build.pg --with-pg-config="${possible_pg_config_path}"
     fi
   done
@@ -219,6 +230,7 @@ ensure_bundle() {
 }
 
 set_ruby_local_version() {
+  debug_timing
   latest_ruby_version="$(cut -d' ' -f1 <<< "${ruby_versions}")"
   echo "${latest_ruby_version}" > .ruby-version
 }
@@ -276,6 +288,21 @@ ensure_pyenv() {
   then
     set_pyenv_env_variables
   fi
+}
+
+ensure_package() {
+  homebrew_package=${1:?homebrew package}
+  apt_package=${2:-${homebrew_package}}
+  binary=${3:-${homebrew_package}}
+  if ! [ -f /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/bin/"${binary}" ] && \
+      ! [ -f /opt/homebrew/bin/"${binary}" ] && \
+      ! [ -f /usr/bin/"${binary}" ] && \
+      ! [ -f /usr/local/bin/"${binary}" ] && \
+      ! [ -f /usr/local/opt/"${homebrew_package}"/bin/"${binary}" ]
+  then
+    install_package "${homebrew_package}" "${apt_package}"
+  fi
+
 }
 
 install_package() {
@@ -404,9 +431,10 @@ ensure_overcommit() {
 }
 
 ensure_rugged_packages_installed() {
-  install_package icu4c libicu-dev # needed by rugged, needed by undercover
-  install_package pkg-config # needed by rugged, needed by undercover
-  install_package cmake # needed by rugged, needed by undercover
+  debug_timing
+  ensure_package icu4c libicu-dev pkgdata # needed by rugged, needed by undercover
+  ensure_package pkg-config # needed by rugged, needed by undercover
+  ensure_package cmake # needed by rugged, needed by undercover
 }
 
 ensure_types_built() {
@@ -419,7 +447,10 @@ set_ruby_local_version
 
 ensure_rugged_packages_installed
 
+echo "Ensuring pg gem"
+date
 ensure_pg_gem
+date
 
 ensure_bundle
 
