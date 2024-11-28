@@ -126,7 +126,8 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
             run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
             # copy artifacts back
-            run(['cp', '-Rn', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
+            run(['gcp', '-Rn', '--backup',
+                 os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
