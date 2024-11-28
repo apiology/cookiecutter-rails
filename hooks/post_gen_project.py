@@ -151,7 +151,7 @@ if __name__ == '__main__':
     run(['rails', 'g', 'annotate:install', '--skip'])
     run(['bundle', 'exec', 'rubocop', '-A'])
     run(['git', 'add', '-A'])
-    run(['make', 'build-typecheck'])
+    # run(['make', 'build-typecheck']) # TODO
     run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
          'rails new'])
 
