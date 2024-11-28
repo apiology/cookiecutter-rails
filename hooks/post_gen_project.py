@@ -124,6 +124,7 @@ if __name__ == '__main__':
                  '--skip-test',
                  '--skip',
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
+            run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
             # copy artifacts back
             run(['cp', '-Rn', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
