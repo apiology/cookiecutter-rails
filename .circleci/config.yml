@@ -160,7 +160,7 @@ jobs:
 
                   # export FIX_SH_TIMING_LOG=/tmp/child_fix_sh_timing.log
 
-                  ln -sf /bin/cp /bin/gcp
+                  sudo ln -sf /bin/cp /bin/gcp
 
                   make citest cicoverage
             - store_artifacts:
