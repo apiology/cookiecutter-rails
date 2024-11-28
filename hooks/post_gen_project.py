@@ -143,7 +143,9 @@ if __name__ == '__main__':
         create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
         create_production_db_onepass_entry()
     run(['make', 'bundle_install'])
-    run(['bundle', 'update', '--conservative', 'rexml', 'rails', 'puma', 'nokogiri'])
+    run(['bundle', 'update', '--conservative',
+         # 'rexml', # TODO
+         'rails', 'puma', 'nokogiri'])
     run(['rails', 'g', 'rspec:install', '--skip'])
     run(['rails', 'importmap:install'])
     run(['rails', 'g', 'annotate:install', '--skip'])
