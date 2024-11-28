@@ -126,7 +126,7 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
             run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
             # copy artifacts back
-            run(['gcp', '-Rn', '--backup',
+            run(['gcp', '-R', '--backup',
                  os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
