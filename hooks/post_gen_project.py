@@ -190,10 +190,10 @@ if __name__ == '__main__':
                  os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
             revert = [
-                '.ruby-version',
                 '.rubocop.yml',
                 'README.md',
                 '.gitignore',
+                '.ruby-version',
             ]
 
             # revert from the backup file, as these files don't have
