@@ -134,7 +134,7 @@ def patch_directory(directory):
                 try:
                     full_filename = os.path.join(root, filename)
                     original_filename = full_filename[:-6]
-                    run(['patch', '-f', '-i', full_filename])
+                    run(['patch', '-p0', '-i', full_filename])
                     # delete file
                     run(['rm', full_filename])
                 except subprocess.CalledProcessError:
