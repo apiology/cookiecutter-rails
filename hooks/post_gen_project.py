@@ -177,6 +177,9 @@ if __name__ == '__main__':
     run(['rbenv', 'version'],
         cwd=parent)
     if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
+        # delete .ruby-version if it exists so we don't track a delta; we'll overwrite it later
+        # with the fix.sh call.
+        run(['rm', '-f', '.ruby-version'])
         # with a temporary directory
         with tempfile.TemporaryDirectory() as tempdir:
             run(['rbenv', 'exec', 'rails', 'new',
