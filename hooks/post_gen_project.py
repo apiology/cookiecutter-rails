@@ -193,7 +193,6 @@ if __name__ == '__main__':
                 '.rubocop.yml',
                 'README.md',
                 '.gitignore',
-                '.ruby-version',
             ]
 
             # revert from the backup file, as these files don't have
