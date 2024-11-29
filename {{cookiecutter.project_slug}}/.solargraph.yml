@@ -27,7 +27,16 @@ exclude:
   - spec/**/*
   - ".bundle/**/*"
   - ".markdownlint_style.rb"
-require: []
+require:
+  - actioncable
+  - actionmailer
+  - actionpack
+  - actionview
+  - activejob
+  - activemodel
+  - activerecord
+  - activestorage
+  - activesupport
 domains: []
 reporters:
   - rubocop

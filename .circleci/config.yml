@@ -141,7 +141,7 @@ jobs:
             # virtualenv, and only run in default Python version.
             - restore_cache:
                 keys:
-                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
+                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-
                   - child-gems-v4-
                   - child-gems-
             - run_with_languages:
@@ -160,11 +160,13 @@ jobs:
 
                   # export FIX_SH_TIMING_LOG=/tmp/child_fix_sh_timing.log
 
+                  sudo ln -sf /bin/cp /bin/gcp
+
                   make citest cicoverage
             - store_artifacts:
                 path: /tmp/child_fix_sh_timing.log
             - save_cache:
-                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-{{ checksum "/tmp/.ruby-version" }} # yamllint disable-line rule:line-length
+                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "/tmp/.ruby-version" }} # yamllint disable-line rule:line-length
                 paths:
                   - "vendor/bundle"
                   - ".yardoc"
