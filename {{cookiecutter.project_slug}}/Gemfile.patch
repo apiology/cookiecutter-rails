@@ -11,7 +11,7 @@
  # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
  gem "rails", "~> 7.2.2"
  # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-@@ -34,20 +39,53 @@
+@@ -34,18 +39,50 @@
  # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
  # gem "image_processing", "~> 1.2"
  
@@ -21,6 +21,7 @@
  group :development, :test do
    # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
    gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+ 
 +  gem "mdl"
 +  gem "rspec"
 +  gem "rspec-rails"
@@ -29,7 +30,7 @@
 +  gem "simplecov-lcov"
 +  gem "undercover"
 +  gem "webmock"
- 
++
    # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
    gem "brakeman", require: false
 -
@@ -60,11 +61,7 @@
 +      branch: "main"
    # Use console on exceptions pages [https://github.com/rails/web-console]
    gem "web-console"
-+
-+  # Highlight the fine-grained location where an error occurred [https://github.com/ruby/error_highlight]
-+  gem "error_highlight", ">= 0.4.0", platforms: [ :ruby ]
 +  gem "yard"
  end
- 
++
 +gem "redis"
- 
