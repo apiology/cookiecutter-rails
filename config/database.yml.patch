@@ -1,0 +1,58 @@
+--- config/database.yml	2024-11-28 21:13:48
++++ config/database.yml~	2024-11-28 21:19:29
+@@ -22,25 +22,26 @@
+ 
+ development:
+   <<: *default
+-  database: rails_boilerplate_development
++  # plate_spinner_rails_development
++  database: <%= ENV['RAILS_BOILERPLATE_DEV_DATABASE_DATABASE'] %>
+ 
+   # The specified database role being used to connect to PostgreSQL.
+   # To create additional roles in PostgreSQL see `$ createuser --help`.
+   # When left blank, PostgreSQL will use the default role. This is
+   # the same name as the operating system user running Rails.
+-  #username: rails_boilerplate
++  username: <%= ENV['RAILS_BOILERPLATE_DEV_DATABASE_USERNAME'] %>
+ 
+   # The password associated with the PostgreSQL role (username).
+-  #password:
++  password: <%= ENV['RAILS_BOILERPLATE_DEV_DATABASE_PASSWORD'] %>
+ 
+   # Connect on a TCP socket. Omitted by default since the client uses a
+   # domain socket that doesn't need configuration. Windows does not have
+   # domain sockets, so uncomment these lines.
+-  #host: localhost
++  host: <%= ENV['RAILS_BOILERPLATE_DEV_DATABASE_SERVER'] %>
+ 
+   # The TCP port the server listens on. Defaults to 5432.
+   # If your server runs on a different port number, change accordingly.
+-  #port: 5432
++  port: <%= ENV['RAILS_BOILERPLATE_DEV_DATABASE_PORT'] %>
+ 
+   # Schema search path. The server defaults to $user,public
+   #schema_search_path: myapp,sharedapp,public
+@@ -56,7 +57,13 @@
+ # Do not set this db to the same as development or production.
+ test:
+   <<: *default
+-  database: rails_boilerplate_test
++  database: <%= ENV['RAILS_BOILERPLATE_TEST_DATABASE_DATABASE'] %>
++  username: <%= ENV['RAILS_BOILERPLATE_TEST_DATABASE_USERNAME'] %>
++  password: <%= ENV['RAILS_BOILERPLATE_TEST_DATABASE_PASSWORD'] %>
++  # don't use unix domain socket, use TCP/IP, so we can host database via
++  # Docker:
++  host: <%= ENV['RAILS_BOILERPLATE_TEST_DATABASE_SERVER'] %>
++  port: <%= ENV['RAILS_BOILERPLATE_TEST_DATABASE_PORT'] %>
+ 
+ # As with config/credentials.yml, you never want to store sensitive information,
+ # like your database password, in your source code. If your source code is
+@@ -78,7 +85,5 @@
+ #     url: <%= ENV["MY_APP_DATABASE_URL"] %>
+ #
+ production:
++  url: <%= ENV.fetch('PROD_DATABASE_URL', ENV['DATABASE_URL']) %>
+   <<: *default
+-  database: rails_boilerplate_production
+-  username: rails_boilerplate
+-  password: <%= ENV["RAILS_BOILERPLATE_DATABASE_PASSWORD"] %>
