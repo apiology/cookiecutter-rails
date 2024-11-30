@@ -216,13 +216,11 @@ if __name__ == '__main__':
             verify_directory('.')
 
     run('./fix.sh')
+    run(['bundle', 'exec', 'rubocop', '-A'])
+    run(['git', 'add', '-A'])
     run(['bundle', 'exec', 'overcommit', '--install'])
     run(['bundle', 'exec', 'overcommit', '--sign'])
     run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
-    run(['make', 'bundle_install'])
-    run(['bundle', 'exec', 'rubocop', '-A'])
-    run(['git', 'add', '-A'])
-    run(['make', 'build-typecheck'])
     run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
          '-m', 'Initial commit from boilerplate'])
 
