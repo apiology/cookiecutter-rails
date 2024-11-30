@@ -85,9 +85,9 @@ def verify_backup_file(filename):
     print("Verifying backup file", filename)
 
     # if two files are identical, remove new one
-    with open(orig_filename) as f:
+    with open(orig_filename, 'rb') as f:
         orig_contents = f.read()
-    with open(new_filename) as f:
+    with open(new_filename, 'rb') as f:
         new_contents = f.read()
     if orig_contents == new_contents:
         run(['rm', new_filename])
@@ -184,33 +184,38 @@ if __name__ == '__main__':
         with tempfile.TemporaryDirectory() as tempdir:
             run(['rbenv', 'exec', 'rails', 'new',
                  '--database=postgresql',
+                 '--skip-action-mailer',
                  '--skip-test',
-                 '--skip',
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
             run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
             # copy artifacts back
             run(['gcp', '-R', '--backup',
                  os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
+
+            # Ignore version from Rails
             revert = [
                 '.rubocop.yml',
                 'README.md',
                 '.gitignore',
+                'config/master.key',
+                'config/credentials.yml.enc',
+                'tmp/local_secret.txt',
             ]
-
             # revert from the backup file, as these files don't have
             # interesting upstream information for us
             for filename in revert:
-                run(['mv', f'{filename}~', filename])
+                # if ~ file exists, revert to it
+                if os.path.exists(f'{filename}~'):
+                    run(['mv', f'{filename}~', filename])
 
-            # find all files ending in .patch
+            # patch Rails version using .patch files
             patch_directory('.')
 
             # error out if we find any files that end in '~' recursively
             verify_directory('.')
 
     run('./fix.sh')
-    run(['git', 'add', '-A'])
     run(['bundle', 'exec', 'overcommit', '--install'])
     run(['bundle', 'exec', 'overcommit', '--sign'])
     run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
