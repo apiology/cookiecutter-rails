@@ -201,33 +201,35 @@ if __name__ == '__main__':
                  os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
                  PROJECT_DIRECTORY])
 
-            # Ignore version from Rails
-            revert = [
-                '.rubocop.yml',
-                'README.md',
-                '.gitignore',
-                'config/master.key',
-                'config/credentials.yml.enc',
-                'tmp/local_secret.txt',
-            ]
-            # revert from the backup file, as these files don't have
-            # interesting upstream information for us
-            for filename in revert:
-                # if ~ file exists, revert to it
-                if os.path.exists(f'{filename}~'):
-                    run(['mv', f'{filename}~', filename])
+        # Ignore version from Rails
+        revert = [
+            '.rubocop.yml',
+            'README.md',
+            '.gitignore',
+            'config/master.key',
+            'config/credentials.yml.enc',
+            'tmp/local_secret.txt',
+        ]
+        # revert from the backup file, as these files don't have
+        # interesting upstream information for us
+        for filename in revert:
+            # if ~ file exists, revert to it
+            if os.path.exists(f'{filename}~'):
+                run(['mv', f'{filename}~', filename])
 
-            # patch Rails version using .patch files
-            patch_directory('.')
+        # patch Rails version using .patch files
+        patch_directory('.')
 
-            # error out if we find any files that end in '~' recursively
-            verify_directory('.')
-
-            run(['rails', 'g', 'rspec:install', '--skip'])
-            run(['rails', 'importmap:install'])
-            run(['rails', 'g', 'annotate:install', '--skip'])
+        # error out if we find any files that end in '~' recursively
+        verify_directory('.')
 
     run('./fix.sh')
+
+    if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
+        run(['rails', 'g', 'rspec:install', '--skip'])
+        run(['rails', 'importmap:install'])
+        run(['rails', 'g', 'annotate:install', '--skip'])
+
     run(['bundle', 'exec', 'rubocop', '-A'])
     run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
          '-m', 'rails new'])
