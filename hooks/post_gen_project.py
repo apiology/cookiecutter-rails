@@ -190,10 +190,15 @@ if __name__ == '__main__':
         run(['rm', '-f', '.ruby-version'])
         # with a temporary directory
         with tempfile.TemporaryDirectory() as tempdir:
+            args = [
+                '--database=postgresql',
+                '--skip-action-mailer',
+                '--skip-test',
+            ]
+            if "{{ cookiecutter.api_only }}" == 'Yes':
+                args.append('--api')
             run(['rbenv', 'exec', 'rails', 'new',
-                 '--database=postgresql',
-                 '--skip-action-mailer',
-                 '--skip-test',
+                 *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
             run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
             # copy artifacts back
@@ -227,7 +232,8 @@ if __name__ == '__main__':
 
     if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
         run(['rails', 'g', 'rspec:install', '--skip'])
-        run(['rails', 'importmap:install'])
+        if "{{ cookiecutter.api_only }}" == 'No':
+            run(['rails', 'importmap:install'])
         run(['rails', 'g', 'annotate:install', '--skip'])
 
     run(['bundle', 'exec', 'rubocop', '-A'])
