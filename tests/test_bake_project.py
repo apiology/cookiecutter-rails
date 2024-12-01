@@ -115,4 +115,19 @@ def test_bake_and_run_build(cookies):
         license_file_path = result.project_path / 'LICENSE'
         now = datetime.datetime.now()
         assert str(now.year) in license_file_path.open().read()
-        print("test_bake_and_run_build path", str(result.project_path))
+        print("path:", str(result.project_path))
+
+
+def test_bake_and_run_build_api_only(cookies):
+    with bake_in_temp_dir(cookies,
+                          extra_context={
+                              'api_only': 'Yes',
+                          }) as result:
+        assert result.project_path.is_dir()
+        assert result.exit_code == 0
+        assert result.exception is None
+
+        assert run_inside_dir('make test', str(result.project_path)) == 0
+        assert run_inside_dir('make typecheck', str(result.project_path)) == 0
+        assert run_inside_dir('make quality', str(result.project_path)) == 0
+        print('path:', str(result.project_path))

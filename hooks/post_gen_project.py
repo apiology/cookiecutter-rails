@@ -134,19 +134,23 @@ def patch_directory(directory):
                 try:
                     full_filename = os.path.join(root, filename)
                     original_filename = full_filename[:-6]
-                    run(['patch', '-p0', '-i', full_filename])
+                    run(['patch', '--force', '-p0', '-i', full_filename])
                     # delete file
                     run(['rm', full_filename])
                 except subprocess.CalledProcessError:
                     print(f'Error patching using {full_filename}')
                     with open(original_filename) as f:
                         original_file_contents = f.read()
-                    print(f'File being patched:\n{original_file_contents}',
+                    print(f'File after patching:\n{original_file_contents}',
+                          flush=True, file=sys.stdout)
+                    with open(full_filename) as f:
+                        full_file_contents = f.read()
+                    print(f'.patch file:\n{full_file_contents}',
                           flush=True, file=sys.stdout)
                     orig_file = f"{original_filename}.orig"
                     with open(orig_file) as f:
                         orig_file_contents = f.read()
-                    print(f'Original file:\n{orig_file_contents}',
+                    print(f'.original file:\n{orig_file_contents}',
                           flush=True, file=sys.stdout)
                     rej_file = f"{original_filename}.rej"
                     with open(rej_file) as f:
@@ -221,6 +225,18 @@ if __name__ == '__main__':
             # if ~ file exists, revert to it
             if os.path.exists(f'{filename}~'):
                 run(['mv', f'{filename}~', filename])
+
+        append = [
+            'Gemfile'
+        ]
+        for filename in append:
+            # append ~ version of file to file
+            if os.path.exists(f'{filename}~'):
+                with open(f'{filename}~') as f:
+                    with open(filename, 'a') as f2:
+                        f2.write(f.read())
+                # delete ~ file
+                run(['rm', f'{filename}~'])
 
         # patch Rails version using .patch files
         patch_directory('.')
