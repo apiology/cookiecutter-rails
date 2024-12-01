@@ -52,8 +52,6 @@ gem "asana",
 gem "cache_method",
     git: "https://github.com/apiology/cache_method",
     branch: "ruby_3_support"
-+  gem "yard"
 gem 'checkoff' # , path: '/Users/broz/src/checkoff'
-
-gem "redis"
+{% if cookiecutter.use_checkoff == 'Yes' %}gem "redis"{% endif %}
 {% endif %}
