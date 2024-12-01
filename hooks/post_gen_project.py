@@ -164,11 +164,19 @@ if __name__ == '__main__':
     if 'Yes' != '{{ cookiecutter.use_checkoff }}':
         remove_file('config/initializers/checkoff.rb')
 
+    if os.environ.get('IN_COOKIECUTTER_PROJECT_UPGRADER', '0') == '1':
+        os.environ['SKIP_GIT_CREATION'] = '1'
+        os.environ['SKIP_EXTERNAL'] = '1'
+
     if os.environ.get('SKIP_GIT_CREATION', '0') != '1':
         # Don't run these non-idempotent things when in
         # cookiecutter_project_upgrader, which will run this hook
         # multiple times over its lifetime.
         run(['git', 'init'])
+        run(['git', 'add', '-A'])
+        run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
+             '--no-verify',
+             '-m', 'Initial commit from boilerplate'])
     parent = os.path.dirname(PROJECT_DIRECTORY)
     # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
     # Make this configurable?
@@ -215,14 +223,21 @@ if __name__ == '__main__':
             # error out if we find any files that end in '~' recursively
             verify_directory('.')
 
+            run(['rails', 'g', 'rspec:install', '--skip'])
+            run(['rails', 'importmap:install'])
+            run(['rails', 'g', 'annotate:install', '--skip'])
+
     run('./fix.sh')
     run(['bundle', 'exec', 'rubocop', '-A'])
-    run(['git', 'add', '-A'])
-    run(['bundle', 'exec', 'overcommit', '--install'])
-    run(['bundle', 'exec', 'overcommit', '--sign'])
-    run(['bundle', 'exec', 'overcommit', '--sign', 'pre-commit'])
     run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
-         '-m', 'Initial commit from boilerplate'])
+         '-m', 'rails new'])
+    # update frequently security-flagged gems
+    run(['bundle', 'update', '--conservative',
+         'rexml', 'rails', 'puma', 'nokogiri'])
+    run(['git', 'add', '-A'])
+    run(['make', 'build-typecheck'])  # update from bundle updates
+    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+         'security updates'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
@@ -237,17 +252,6 @@ if __name__ == '__main__':
         create_docker_compose_db_onepass_entry('dev', port=port_prefix + 2)
         create_docker_compose_db_onepass_entry('test', port=port_prefix + 3)
         create_production_db_onepass_entry()
-    # update frequently security-flagged gems
-    run(['bundle', 'update', '--conservative',
-         'rexml', 'rails', 'puma', 'nokogiri'])
-    run(['rails', 'g', 'rspec:install', '--skip'])
-    run(['rails', 'importmap:install'])
-    run(['rails', 'g', 'annotate:install', '--skip'])
-    run(['bundle', 'exec', 'rubocop', '-A'])
-    run(['git', 'add', '-A'])
-    run(['make', 'build-typecheck'])
-    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-         'rails new'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         heroku_app_name = '{{ cookiecutter.project_slug }}'
@@ -277,6 +281,7 @@ if __name__ == '__main__':
                     add_onepass_field(heroku_entry_name, 'hostname', host)
                     add_onepass_field(heroku_entry_name, 'port', port)
                     add_onepass_password_field(heroku_entry_name, password)
+
         if 'none' != '{{ cookiecutter.type_of_github_repo }}':
             if 'private' == '{{ cookiecutter.type_of_github_repo }}':
                 visibility_flag = '--private'

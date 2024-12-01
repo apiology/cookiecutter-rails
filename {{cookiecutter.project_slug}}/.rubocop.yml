@@ -205,6 +205,12 @@ Style/TrailingCommaInHashLiteral:
 Style/TrivialAccessors:
   ExactNameMatch: true
 
+Lint:
+  Severity: error
+
+Metrics:
+  Severity: error
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.2
@@ -223,8 +229,8 @@ Style/FrozenStringLiteralComment:
     - 'lib/tasks/auto_annotate_models.rake'
 
 require:
-  - rubocop-rake
   - rubocop-rspec
   - rubocop-rails
   - rubocop-rspec_rails
   - rubocop-performance
+  - rubocop-rake
