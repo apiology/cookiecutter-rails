@@ -121,7 +121,7 @@ def verify_directory(directory):
 
 
 def big_and_irrelevant_directory(root):
-    return root.startswith('./.git') or root.startswith('./tmp/cache')
+    return root == './.git' or root.startswith('./.git/') or root.startswith('./tmp/cache')
 
 
 def patch_directory(directory):
