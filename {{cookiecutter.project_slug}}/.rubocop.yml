@@ -1,6 +1,11 @@
 ---
 inherit_from: .rubocop_todo.yml
 
+# We keep our gems separate from the rails generated ones for easier
+# mechanized upgrades
+Bundler/DuplicatedGroup:
+  Enabled: false
+
 Layout/HashAlignment:
   Exclude:
     # generated
