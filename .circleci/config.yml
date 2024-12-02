@@ -141,6 +141,7 @@ jobs:
             # virtualenv, and only run in default Python version.
             - restore_cache:
                 keys:
+                  - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-  # yamllint disable-line rule:line-length
                   - child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-
                   - child-gems-v4-
                   - child-gems-
@@ -166,7 +167,7 @@ jobs:
             - store_artifacts:
                 path: /tmp/child_fix_sh_timing.log
             - save_cache:
-                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "/tmp/.ruby-version" }} # yamllint disable-line rule:line-length
+                key: child-gems-v4-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "/tmp/.ruby-version" }}  # yamllint disable-line rule:line-length
                 paths:
                   - "vendor/bundle"
                   - ".yardoc"
