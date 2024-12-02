@@ -197,10 +197,16 @@ if __name__ == '__main__':
             args = [
                 '--database=postgresql',
                 '--skip-action-mailer',
+                '--skip-action-mailbox',
                 '--skip-test',
+                '--skip-action-text',
+                '--skip-active-storage',
+                '--skip-action-cable',
+                '--skip-ci',
             ]
             if "{{ cookiecutter.api_only }}" == 'Yes':
                 args.append('--api')
+
             run(['rbenv', 'exec', 'rails', 'new',
                  *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
