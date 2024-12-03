@@ -210,7 +210,21 @@ if __name__ == '__main__':
             run(['rbenv', 'exec', 'rails', 'new',
                  *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
-            run(['rm', '-rf', os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.git')])
+
+            rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
+            run(['bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
+                cwd=rails_new_project_dir)
+            run(['bin/rails', 'g', 'rspec:install', '--force'],
+                cwd=rails_new_project_dir)
+            if "{{ cookiecutter.api_only }}" == 'No':
+                run(['bin/rails', 'importmap:install'],
+                    cwd=rails_new_project_dir)
+            run(['bin/rails', 'g', 'annotate:install', '--force'],
+                cwd=rails_new_project_dir)
+            # we patch Gemfile later in a more pleasing way
+            run(['bundle', 'remove', 'rspec-rails', 'annotate'],
+                cwd=rails_new_project_dir)
+            run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
             run(['gcp', '-R', '--backup',
                  os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
@@ -252,12 +266,6 @@ if __name__ == '__main__':
         verify_directory('.')
 
     run('./fix.sh')
-
-    if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
-        run(['rails', 'g', 'rspec:install', '--skip'])
-        if "{{ cookiecutter.api_only }}" == 'No':
-            run(['rails', 'importmap:install'])
-        run(['rails', 'g', 'annotate:install', '--skip'])
 
     run(['bundle', 'exec', 'rubocop', '-A'])
     run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
