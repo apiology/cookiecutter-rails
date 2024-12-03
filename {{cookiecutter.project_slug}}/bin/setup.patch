@@ -1,0 +1,18 @@
+--- ./bin/setup	2024-12-03 08:02:34
++++ ./bin/setup~	2024-12-03 08:02:24
+@@ -4,10 +4,15 @@
+ APP_ROOT = File.expand_path("..", __dir__)
+ APP_NAME = "{{cookiecutter.project_slug}}"
+ 
++# @param [String] args
++#
++# @return [void]
+ def system!(*args)
++  # @sg-ignore
+   system(*args, exception: true)
+ end
+ 
++# @sg-ignore
+ FileUtils.chdir APP_ROOT do
+   # This script is a way to set up or update your development environment automatically.
+   # This script is idempotent, so that you can run it at any time and get an expectable outcome.
