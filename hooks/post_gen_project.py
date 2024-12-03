@@ -233,7 +233,8 @@ if __name__ == '__main__':
                 run(['mv', f'{filename}~', filename])
 
         append = [
-            'Gemfile'
+            'Gemfile',
+            '.dockerignore'
         ]
         for filename in append:
             # append ~ version of file to file

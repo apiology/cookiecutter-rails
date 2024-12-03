@@ -1,0 +1,6 @@
+
+# Ignore test coverage
+coverage
+
+# Ignore documentation
+doc
