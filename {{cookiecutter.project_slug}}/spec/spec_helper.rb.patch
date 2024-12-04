@@ -1,10 +1,16 @@
 --- ./spec/spec_helper.rb	2024-12-03 08:37:17
 +++ ./spec/spec_helper.rb~	2024-12-03 08:37:04
+{% if cookiecutter.use_checkoff == 'Yes' %}@@ -13,7 +13,66 @@
+ #
+ # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
++
++# @sg-ignore
++ENV['REDIS_HOSTNAME'] = 'deactivated-anyway'{% else %}
 @@ -13,7 +13,64 @@
  # it.
  #
  # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-+
++{% endif %}
 +
 +require 'simplecov'
 +require 'simplecov-lcov'

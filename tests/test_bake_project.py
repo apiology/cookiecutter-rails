@@ -118,10 +118,11 @@ def test_bake_and_run_build(cookies):
         print("path:", str(result.project_path))
 
 
-def test_bake_and_run_build_api_only(cookies):
+def test_bake_and_run_build_non_default_options(cookies):
     with bake_in_temp_dir(cookies,
                           extra_context={
                               'api_only': 'Yes',
+                              'use_checkoff': 'Yes',
                           }) as result:
         assert result.project_path.is_dir()
         assert result.exit_code == 0

@@ -124,6 +124,40 @@ def big_and_irrelevant_directory(root):
     return root == './.git' or root.startswith('./.git/') or root.startswith('./tmp/cache')
 
 
+def diagnose_patch_error(patch_filename, target_file):
+    print(f'Error patching using {patch_filename}')
+    with open(target_file) as f:
+        original_file_contents = f.read()
+        print(f'File after patching:\n{original_file_contents}', flush=True, file=sys.stdout)
+        with open(patch_filename) as f:
+            full_file_contents = f.read()
+        print(f'.patch file:\n{full_file_contents}', flush=True, file=sys.stdout)
+        orig_file = f"{target_file}.orig"
+        # if orig_file exists
+        if os.path.exists(orig_file):
+            with open(orig_file) as f:
+                orig_file_contents = f.read()
+            print(f'.orig file:\n{orig_file_contents}', flush=True, file=sys.stdout)
+        rej_file = f"{target_file}.rej"
+        if os.path.exists(rej_file):
+            with open(rej_file) as f:
+                rej_file_contents = f.read()
+                print(f'Rejected hunk:\n{rej_file_contents}', flush=True, file=sys.stdout)
+        tilde_file = f"{target_file}~"
+        if os.path.exists(tilde_file):
+            with open(tilde_file) as f:
+                tilde_file_contents = f.read()
+            print(f'Intended file:\n{tilde_file_contents}', flush=True, file=sys.stdout)
+            # if orig path does not exist
+            if not os.path.exists(orig_file):
+                # patch process errored out without processing any hunks
+                orig_file = target_file
+            # show diff
+            print(f"Save this as {target_file}.patch", flush=True, file=sys.stdout)
+            print(subprocess.getoutput(f'diff -u {orig_file} {tilde_file}'),
+                  flush=True, file=sys.stdout)
+
+
 def patch_directory(directory):
     for root, dirs, files in os.walk(directory):
         if big_and_irrelevant_directory(root):
@@ -138,25 +172,7 @@ def patch_directory(directory):
                     # delete file
                     run(['rm', full_filename])
                 except subprocess.CalledProcessError:
-                    print(f'Error patching using {full_filename}')
-                    with open(original_filename) as f:
-                        original_file_contents = f.read()
-                    print(f'File after patching:\n{original_file_contents}',
-                          flush=True, file=sys.stdout)
-                    with open(full_filename) as f:
-                        full_file_contents = f.read()
-                    print(f'.patch file:\n{full_file_contents}',
-                          flush=True, file=sys.stdout)
-                    orig_file = f"{original_filename}.orig"
-                    with open(orig_file) as f:
-                        orig_file_contents = f.read()
-                    print(f'.original file:\n{orig_file_contents}',
-                          flush=True, file=sys.stdout)
-                    rej_file = f"{original_filename}.rej"
-                    with open(rej_file) as f:
-                        rej_file_contents = f.read()
-                    print(f'Rejected hunk:\n{rej_file_contents}',
-                          flush=True, file=sys.stdout)
+                    diagnose_patch_error(full_filename, original_filename)
                     raise
 
 
