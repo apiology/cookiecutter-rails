@@ -212,7 +212,7 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
             rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
-            run(['bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
+            run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
                 cwd=rails_new_project_dir)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
                 cwd=rails_new_project_dir)
@@ -222,7 +222,7 @@ if __name__ == '__main__':
             run(['bin/rails', 'g', 'annotate:install', '--force'],
                 cwd=rails_new_project_dir)
             # we patch Gemfile later in a more pleasing way
-            run(['bundle', 'remove', 'rspec-rails', 'annotate'],
+            run(['bin/bundle', 'remove', 'rspec-rails', 'annotate'],
                 cwd=rails_new_project_dir)
             run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
