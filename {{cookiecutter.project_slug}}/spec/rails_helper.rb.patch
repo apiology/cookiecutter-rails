@@ -1,0 +1,11 @@
+--- ./spec/rails_helper.rb	2024-12-04 08:39:52
++++ ./spec/rails_helper.rb~	2024-12-04 08:39:38
+@@ -61,7 +61,7 @@
+   # behaviour is considered legacy and will be removed in a future version.
+   #
+   # To enable this behaviour uncomment the line below.
+-  # config.infer_spec_type_from_file_location!
++  config.infer_spec_type_from_file_location!
+ 
+   # Filter lines from Rails gems in backtraces.
+   config.filter_rails_from_backtrace!
