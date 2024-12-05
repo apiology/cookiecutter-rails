@@ -283,15 +283,16 @@ if __name__ == '__main__':
 
     run('./fix.sh')
 
-    run(['bundle', 'exec', 'rubocop', '-A'])
-    run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
+    run(['bin/bundle', 'exec', 'rubocop', '-A'])
+    run(['git', 'add', '-A'])
+    run(['bin/bundle', 'exec', 'git', 'commit', '--allow-empty',
          '-m', 'rails new'])
     # update frequently security-flagged gems
-    run(['bundle', 'update', '--conservative',
+    run(['bin/bundle', 'update', '--conservative',
          'rexml', 'rails', 'puma', 'nokogiri'])
     run(['git', 'add', '-A'])
     run(['make', 'build-typecheck'])  # update from bundle updates
-    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+    run(['bin/bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
          'security updates'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
