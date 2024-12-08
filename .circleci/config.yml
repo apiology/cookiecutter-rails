@@ -76,6 +76,10 @@ commands:
             export GEM_HOME
 
             './fix.sh'
+
+            # Use most recent Ruby version as the global version;
+            # needed when we run 'rails new'
+            rbenv global $(rbenv versions --bare | tail -1)
       - store_artifacts:
           path: /tmp/fix_sh_timing.log
       - run:
