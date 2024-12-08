@@ -77,6 +77,9 @@ commands:
 
             './fix.sh'
 
+            export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
+            eval "$(rbenv init -)"
+
             # Use most recent Ruby version as the global version;
             # needed when we run 'rails new'
             rbenv global $(rbenv versions --bare | tail -1)
