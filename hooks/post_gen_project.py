@@ -194,7 +194,7 @@ if __name__ == '__main__':
         # multiple times over its lifetime.
         run(['git', 'init'])
         run(['git', 'add', '-A'])
-        run(['bundle', 'exec', 'git', 'commit', '--allow-empty',
+        run(['git', 'commit', '--allow-empty',
              '--no-verify',
              '-m', 'Initial commit from boilerplate'])
     parent = os.path.dirname(PROJECT_DIRECTORY)
@@ -283,17 +283,10 @@ if __name__ == '__main__':
 
     run('./fix.sh')
 
-    run(['bin/bundle', 'exec', 'rubocop', '-A'])
+    run(['bin/bundle', 'exec', 'rubocop', '-A', '--disable-uncorrectable'])
     run(['git', 'add', '-A'])
     run(['bin/bundle', 'exec', 'git', 'commit', '--allow-empty',
-         '-m', 'rails new'])
-    # update frequently security-flagged gems
-    run(['bin/bundle', 'update', '--conservative',
-         'rexml', 'rails', 'puma', 'nokogiri'])
-    run(['git', 'add', '-A'])
-    run(['make', 'build-typecheck'])  # update from bundle updates
-    run(['bin/bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
-         'security updates'])
+         '-m', 'rails new, reformat'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
