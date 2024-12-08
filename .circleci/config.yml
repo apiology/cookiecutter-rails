@@ -59,6 +59,8 @@ commands:
             - pyenv-
       - restore_cache:
           keys:
+            - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "Gemfile.lock" }}- # yamllint disable-line rule:line-length
+            - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}- # yamllint disable-line rule:line-length
             - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
             - child-rbenv-v3-
             - child-rbenv-
@@ -188,7 +190,7 @@ jobs:
             - store_artifacts:
                 path: /tmp/child_fix_sh_timing.log
             - save_cache:
-                key: child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "/tmp/.ruby-version" }} # yamllint disable-line rule:line-length
+                key: child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "Gemfile.lock" }}-{{ checksum ".ruby-version" }} # yamllint disable-line rule:line-length
                 paths:
                   - "vendor/bundle"
                   - "Gemfile.lock.installed"
