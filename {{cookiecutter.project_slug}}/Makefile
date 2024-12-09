@@ -17,9 +17,12 @@ help:
 
 default: clean-coverage test coverage clean-typecoverage typecheck typecoverage quality ## run default typechecking, tests and quality
 
-build-typecheck: bundle_install ## Fetch information that type checking depends on
-	bundle exec yard gems 2>&1; bundle exec yard gems --safe 2>&1; bundle exec yard gems 2>&1
+build-typecheck: types.installed ## Fetch information that type checking depends on
+
+types.installed: Gemfile.lock Gemfile.lock.installed ## Install Ruby dependencies
+	bundle exec yard gems 2>&1 || bundle exec yard gems --safe 2>&1 || bundle exec yard gems 2>&1
 	# bundle exec solargraph scan 2>&1
+	touch types.installed
 
 clean-typecheck: ## Refresh information that type checking depends on
 	bundle exec solargraph clear
@@ -119,13 +122,22 @@ cicoverage: coverage ## check code coverage
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall
+	# cookiecutter_project_upgrader does its work in
+	# .git/cookiecutter/{{cookiecutter.project_slug}}, but RuboCop wants to inherit
+	# config from all directories above it - avoid config
+	# mismatches by moving this out of the way
+	mv .rubocop.yml .rubocop-renamed.yml || true
 	cookiecutter_project_upgrader --help >/dev/null
 	IN_COOKIECUTTER_PROJECT_UPGRADER=1 cookiecutter_project_upgrader || true
+	mv .rubocop-renamed.yml .rubocop.yml
 	git checkout cookiecutter-template && git push --no-verify
 	git checkout main; overcommit --sign && overcommit --sign pre-commit && git checkout main && git pull && git checkout -b update-from-cookiecutter-$$(date +%Y-%m-%d-%H%M)
 	git merge cookiecutter-template || true
 	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
 	git add config/credentials.yml.enc Gemfile.lock || true
+	# update frequently security-flagged gems while we're here
+	bundle update --conservative rexml || true
+	git add Gemfile.lock || true
 	bundle install || true
 	bundle exec overcommit --install || true
 	@echo

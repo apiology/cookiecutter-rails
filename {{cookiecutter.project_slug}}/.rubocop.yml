@@ -62,6 +62,10 @@ Metrics/BlockLength:
 Metrics/ParameterLists:
   CountKeywordArgs: false
 
+Naming/FileName:
+  Exclude:
+    - 'lib/{{cookiecutter.project_slug}}.rb'
+
 Naming/HeredocDelimiterNaming:
   Enabled: false
 

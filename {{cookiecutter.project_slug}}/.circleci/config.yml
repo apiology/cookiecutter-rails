@@ -22,8 +22,12 @@ commands:
             eval "$(pyenv init --path)"
             eval "$(pyenv virtualenv-init -)"
             eval "$(rbenv init -)"
+
             # keep this in a single place for both main and child builds for cachability
-            export BUNDLE_PATH="$(pwd)/vendor/bundle"
+            BUNDLE_PATH="$(pwd)/vendor/bundle"
+            export BUNDLE_PATH
+            GEM_HOME="${BUNDLE_PATH}"
+            export GEM_HOME
 
             <<parameters.command>>
           environment:
@@ -34,23 +38,24 @@ commands:
     description: "Install source environment"
     steps:
       - checkout
+      - run:
+          name: Update timestamps to original commit time
+          command: |
+            git ls-tree -r --name-only HEAD | while read filename; do \
+              unixtime=$(git log -1 --format="%at" -- "${filename}")
+              touchtime=$(date -d @$unixtime +'%Y%m%d%H%M.%S')
+              touch -t ${touchtime} "${filename}"
+            done
       - restore_cache:
           keys:
-            - gems-v3-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
-            - gems-v3-
-            - gems-
+            - rbenv-v4-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
+            - rbenv-v4-
+            - rbenv-
       - restore_cache:
           keys:
-            - solargraph-v2-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ .Branch }}{% endraw %}
-            - solargraph-v2-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
-            - solargraph-v2-
-            - solargraph-
-      - restore_cache:
-          keys:
-            - wheels-v1-3.12.1-{% raw %}{{ checksum "requirements_dev.txt" }}{% endraw %}
-            - wheels-v1-3.12.1-
-            - wheels-v1-
-            - wheels-
+            - pyenv-v2-{% raw %}{{ checksum "requirements_dev.txt" }}{% endraw %}-
+            - pyenv-v2-
+            - pyenv-
       - run:
           name: Initialize packages
           command: |
@@ -59,7 +64,11 @@ commands:
 
             # export FIX_SH_TIMING_LOG=/tmp/fix_sh_timing.log
 
-            export BUNDLE_PATH="$(pwd)/vendor/bundle"
+            BUNDLE_PATH="$(pwd)/vendor/bundle"
+            export BUNDLE_PATH
+            GEM_HOME="${BUNDLE_PATH}"
+            export GEM_HOME
+
             './fix.sh'
       - store_artifacts:
           path: /tmp/fix_sh_timing.log
@@ -72,16 +81,11 @@ commands:
               exit 1
             fi
       - save_cache:
-          key: gems-v3-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %}
+          key: pyenv-v2-{% raw %}{{ checksum "requirements_dev.txt" }}{% endraw %}-{% raw %}{{ checksum ".python-version" }}{% endraw %}
           paths:
-            - "vendor/bundle"
-            - ".yardoc"
-      - save_cache:
-          key: wheels-v1-3.12.1-{% raw %}{{ checksum "requirements_dev.txt" }}{% endraw %}
-          paths:
+            - "requirements_dev.txt.installed"
             - "/home/circleci/.cache/pip/wheels"
-            - "/home/circleci/.pyenv/versions/3.12.1/envs/{{cookiecutter.project_slug}}-3.12.1"
-            - "/home/circleci/.pyenv/versions/{{cookiecutter.project_slug}}-3.12.1"
+            - "/home/circleci/.pyenv"
       - run:
           name: Download new circleci tool
           command: |
@@ -104,7 +108,7 @@ commands:
       - run_with_languages:
           label: Run brakeman
           command: |
-            bundle exec brakeman --no-pager
+            bundle exec brakeman --no-pager --force
       - run_with_languages:
           label: Run Rubocop
           command: |
@@ -190,13 +194,13 @@ jobs:
   quality:
     working_directory: ~/{{cookiecutter.project_slug}}
     docker:
-      - image: apiology/circleci-ruby:latest
+      - image: cimg/base:current
     steps:
       - quality
   build:
     working_directory: ~/{{cookiecutter.project_slug}}
     docker:
-      - image: apiology/circleci-ruby:latest
+      - image: cimg/base:current
         environment:
           # upper case and replace "-" with "_"
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_DATABASE: {{cookiecutter.project_slug}}_test
@@ -222,6 +226,15 @@ jobs:
       - run_with_languages:
           label: Typecheck
           command: make citypecheck citypecoverage
+      - save_cache:
+          key: rbenv-v4-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %}
+          paths:
+            - "Gemfile.lock.installed"
+            - "types.installed"
+            - "vendor/bundle"
+            - "/home/circleci/.rbenv"
+            - ".yardoc"
+            - "/home/circleci/.cache/solargraph"
       - run_with_languages:
           label: Test
           command: |
@@ -230,11 +243,6 @@ jobs:
             dockerize -wait tcp://localhost:5432 -timeout 1m
 
             make citest cicoverage
-      - save_cache:
-          key: solargraph-v2-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ .Branch }}{% endraw %}
-          paths:
-            - ".yardoc"
-            - "/home/circleci/.cache/solargraph"
     # This seemed to shave 5ish% of the build time off when added
     resource_class: large
 
