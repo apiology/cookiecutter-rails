@@ -162,7 +162,7 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
 	git add config/credentials.yml.enc Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
-	bundle update --conservative rexml yard || true
+	bundle update --conservative nokogiri rexml yard || true
 	make build-typecheck
 	git add Gemfile.lock || true
 	bundle install || true
