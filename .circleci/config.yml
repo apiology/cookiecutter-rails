@@ -59,9 +59,8 @@ commands:
             - pyenv-
       - restore_cache:
           keys:
-            - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "Gemfile.lock" }}- # yamllint disable-line rule:line-length
             - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}- # yamllint disable-line rule:line-length
-            - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile" }}-
+            - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-
             - child-rbenv-v3-
             - child-rbenv-
       - run:

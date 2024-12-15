@@ -197,6 +197,8 @@ if __name__ == '__main__':
         run(['git', 'commit', '--allow-empty',
              '--no-verify',
              '-m', 'Initial commit from boilerplate'])
+    if 'Yes' != '{{ cookiecutter.use_checkoff }}':
+        run(['rm', 'config/annotations_asana.rb'])
     parent = os.path.dirname(PROJECT_DIRECTORY)
     # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
     # Make this configurable?
@@ -283,10 +285,14 @@ if __name__ == '__main__':
 
     run('./fix.sh')
 
-    run(['bin/bundle', 'exec', 'rubocop', '-A', '--disable-uncorrectable'])
+    run(['bin/rubocop', '-A', '--disable-uncorrectable'])
     run(['git', 'add', '-A'])
     run(['bin/bundle', 'exec', 'git', 'commit', '--allow-empty',
          '-m', 'rails new, reformat'])
+    run(['make', 'build-typecheck'])  # update from bundle updates
+    run(['git', 'add', '-A'])
+    run(['bundle', 'exec', 'git', 'commit', '--allow-empty', '-m',
+         'make build-typecheck'])
 
     if os.environ.get('SKIP_EXTERNAL', '0') != '1':
         main_onepass_entry = '{{ cookiecutter.project_name }}'
