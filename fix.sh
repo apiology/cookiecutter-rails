@@ -141,6 +141,11 @@ ensure_ruby_build_requirements() {
   ensure_dev_library yaml.h libyaml libyaml-dev
 }
 
+ensure_rails_build_requirements() {
+  ensure_dev_library yaml.h libyaml libyaml-dev
+}
+
+
 ensure_latest_ruby_build_definitions() {
   ensure_rbenv
 
@@ -506,3 +511,5 @@ ensure_shellcheck
 ensure_types_built
 
 ensure_overcommit
+
+ensure_rails_build_requirements
