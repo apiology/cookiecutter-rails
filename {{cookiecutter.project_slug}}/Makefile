@@ -1,4 +1,4 @@
-.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default feature help localtest overcommit quality repl report-coverage report-coverage-to-codecov rubocop spec test typecheck typecoverage update_from_cookiecutter
+.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default feature gem_dependencies help localtest overcommit quality repl report-coverage report-coverage-to-codecov rubocop spec test typecheck typecoverage update_from_cookiecutter
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -97,9 +97,11 @@ pip_install: requirements_dev.txt.installed ## Install Python dependencies
 Gemfile.lock: Gemfile
 	bundle lock
 
+gem_dependencies: .make/pg_gem_dependencies
+
 # Ensure any Gemfile.lock changes, even pulled form git, ensure a
 # bundle is installed.
-Gemfile.lock.installed: Gemfile.lock Gemfile
+Gemfile.lock.installed: .make/pg_gem_dependencies Gemfile.lock Gemfile
 	bundle install
 	touch Gemfile.lock.installed
 
@@ -145,6 +147,16 @@ coverage: test report-coverage ## check code coverage
 report-coverage: test ## Report summary of coverage to stdout, and generate HTML, XML coverage report
 
 cicoverage: coverage ## check code coverage
+
+.make/pg_gem_dependencies:
+	for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config; \
+	do \
+	  if [ -f "$${possible_pg_config_path}" ]; \
+	  then \
+	    bundle config set build.pg --with-pg-config="$${possible_pg_config_path}"; \
+	  fi \
+	done
+	touch .make/pg_gem_dependencies
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall

@@ -209,6 +209,9 @@ if __name__ == '__main__':
     if os.environ.get('SKIP_RAILS_NEW', '0') != '1':
         # delete .ruby-version if it exists so we don't track a delta; we'll overwrite it later
         # with the fix.sh call.
+
+        # Install anything we need for Rails to install gems later
+        run(['make', 'gem_dependencies'])
         run(['rm', '-f', '.ruby-version'])
         # with a temporary directory
         with tempfile.TemporaryDirectory() as tempdir:
