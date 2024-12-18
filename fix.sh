@@ -141,6 +141,11 @@ ensure_ruby_build_requirements() {
   ensure_dev_library yaml.h libyaml libyaml-dev
 }
 
+ensure_rails_build_requirements() {
+  ensure_dev_library yaml.h libyaml libyaml-dev
+}
+
+
 ensure_latest_ruby_build_definitions() {
   ensure_rbenv
 
@@ -148,7 +153,7 @@ ensure_latest_ruby_build_definitions() {
 #  # if not pulled in last 24 hours
 #  if [ $(( $(date +%s) - last_pulled_unix_epoch )) -gt $(( 24 * 60 * 60 )) ]
 #  then
-      git -C "$HOME"/.rbenv/plugins/ruby-build pull
+      git -C "$HOME"/.rbenv/plugins/ruby-build pull --force
 #  fi
 }
 
@@ -506,3 +511,5 @@ ensure_shellcheck
 ensure_types_built
 
 ensure_overcommit
+
+ensure_rails_build_requirements

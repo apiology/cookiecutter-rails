@@ -26,7 +26,7 @@ commands:
             # keep this in a single place for both main and child builds for cachability
             BUNDLE_PATH="$(pwd)/vendor/bundle"
             export BUNDLE_PATH
-            GEM_HOME="${BUNDLE_PATH}"
+            GEM_HOME="${BUNDLE_PATH}/ruby/3.3.0"
             export GEM_HOME
 
             <<parameters.command>>
@@ -45,13 +45,13 @@ commands:
             git ls-tree -r --name-only HEAD | while read filename; do \
               unixtime=$(git log -1 --format="%at" -- "${filename}")
               touchtime=$(date -d @$unixtime +'%Y%m%d%H%M.%S')
-              touch -t ${touchtime} "${filename}"
+              touch -ht ${touchtime} "${filename}"
             done
       - restore_cache:
           keys:
-            - solargraph-v3-{{ checksum "Gemfile.lock" }}-
-            - solargraph-v3-
-            - solargraph-
+            - rbenv-v5-{{ checksum "Gemfile.lock" }}-
+            - rbenv-v5-
+            - rbenv-
       - restore_cache:
           keys:
             - pyenv-v2-{{ checksum "requirements_dev.txt" }}-
@@ -73,7 +73,7 @@ commands:
 
             BUNDLE_PATH="$(pwd)/vendor/bundle"
             export BUNDLE_PATH
-            GEM_HOME="${BUNDLE_PATH}"
+            GEM_HOME="${BUNDLE_PATH}/ruby/3.3.0"
             export GEM_HOME
 
             './fix.sh'
@@ -86,19 +86,6 @@ commands:
             rbenv global $(rbenv versions --bare | tail -1)
       - store_artifacts:
           path: /tmp/fix_sh_timing.log
-      - run:
-          name: Verify Gemfile.lock
-          command: |
-            if ! git diff --exit-code Gemfile.lock
-            then
-              >&2 echo "Please resolve changes to Gemfile.lock after bundle install to avoid caching difficulties"
-              exit 1
-            fi
-      - save_cache:
-          key: solargraph-v3-{{ checksum "Gemfile.lock" }}-{{ checksum ".ruby-version" }}
-          paths:
-            - ".yardoc"
-            - "/home/circleci/.cache/solargraph"
       - save_cache:
           key: pyenv-v2-{{ checksum "requirements_dev.txt" }}-{{ checksum ".python-version" }}
           paths:
@@ -200,6 +187,23 @@ jobs:
             equal: [<< pipeline.git.branch >>, "main"]
           steps:
             - tox
+      - save_cache:
+          key: rbenv-v5-{{ checksum "Gemfile.lock" }}-{{ checksum ".ruby-version" }}
+          paths:
+            - "Gemfile.lock.installed"
+            - "types.installed"
+            - "vendor/bundle"
+            - "/home/circleci/.rbenv"
+            - ".yardoc"
+            - "/home/circleci/.cache/solargraph"
+      - run:
+          name: Verify deltas
+          command: |
+            if ! git diff --exit-code .
+            then
+              >&2 echo "Please resolve changes to avoid caching difficulties"
+              exit 1
+            fi
     # This seemed to shave 5ish% of the build time off when added
     resource_class: large
 
