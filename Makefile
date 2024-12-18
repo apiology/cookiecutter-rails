@@ -122,7 +122,7 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git fetch -a
 	git merge cookiecutter-upstream/main --allow-unrelated-histories || true
 	# update frequently security-flagged gems while we're here
-	bundle update --conservative rexml nokogiri || true
+	bundle update --conservative rexml || true
 	git add Gemfile.lock || true
 	bundle install || true
 	bundle exec overcommit --install || true
