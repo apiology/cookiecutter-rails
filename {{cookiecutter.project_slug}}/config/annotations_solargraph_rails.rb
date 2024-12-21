@@ -7,6 +7,24 @@
 # instead of pasting it into an existing one.
 #
 # @!parse
+#   module AbstractController
+#     module Callbacks
+#       module ClassMethods
+#         # @param names [Array<Symbol>]
+#         # @return [void]
+#         def before_action(*names, &block); end
+#         # @param names [Array<Symbol>]
+#         # @return [void]
+#         def prepend_before_action(*names, &block); end
+#         # @param names [Array<Symbol>]
+#         # @return [void]
+#         def skip_before_action(*names, &block); end
+#         # @param names [Array<Symbol>]
+#         # @return [void]
+#         def around_action(*names, &block); end
+#       end
+#     end
+#   end
 #   class ActionController::Base
 #     include ActionController::MimeResponds
 #     include ActionController::Redirecting
@@ -18,6 +36,13 @@
 #     extend AbstractController::Callbacks::ClassMethods
 #     extend ActionController::RequestForgeryProtection::ClassMethods
 #   end
+#   class ActionController::API
+#     include ActionController::MimeResponds
+#     include ActionController::Base
+#     include ActionController::Renderer
+#     extend ActiveSupport::Callbacks::ClassMethods
+#     extend AbstractController::Callbacks::ClassMethods
+#   end
 #   class ActionDispatch::Routing::Mapper
 #     include ActionDispatch::Routing::Mapper::Base
 #     include ActionDispatch::Routing::Mapper::HttpHelpers
@@ -27,6 +52,15 @@
 #     include ActionDispatch::Routing::Mapper::Resources
 #     include ActionDispatch::Routing::Mapper::CustomUrls
 #   end
+#
+# @!override ActionDispatch::Request#headers
+#   @return [Http::Headers]
+#
+# @!override ActionDispatch::Http::Headers#fetch
+#   @param key [String]
+#   @return [String]
+#
+# @!parse
 #   class ActionMailer::Base
 #     extend ActionView::Layouts::ClassMethods
 #   end
@@ -49,13 +83,31 @@
 #     # @return [void]
 #     def draw; end
 #   end
+#   class ActiveJob::Base
+#     extend ActiveJob::Core::ClassMethods
+#     extend ActiveJob::QueueName::ClassMethods
+#     extend ActiveJob::Enqueuing::ClassMethods
+#   end
 #   class ActiveRecord::Base
+#     extend ActiveModel::Validations::ClassMethods
+#     extend ActiveRecord::Encryption::EncryptableRecord
 #     extend ActiveRecord::QueryMethods
 #     extend ActiveRecord::FinderMethods
 #     extend ActiveRecord::Associations::ClassMethods
 #     extend ActiveRecord::Inheritance::ClassMethods
-#     extend ActiveRecord::ModelSchema::ClassMethods
-#     extend ActiveRecord::Transactions::ClassMethods
 #     extend ActiveRecord::Scoping::Named::ClassMethods
+#     extend ActiveRecord::Callbacks::ClassMethods
+#     extend ActiveRecord::Relation
+#     include ActiveRecord::AttributeMethods::PrimaryKey
 #     include ActiveRecord::Persistence
+#   end
+#
+# @!override ActiveRecord::QueryMethods#where
+#   @return [ActiveRecord::Relation]
+#
+# @!parse
+#   class ActiveRecord::Relation
+#     # @see ActiveRecord::Result#each
+#     # @return [void]
+#     def each(&block); end
 #   end
