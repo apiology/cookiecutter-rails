@@ -27,13 +27,18 @@ SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
     SimpleCov::Formatter::LcovFormatter,
   ]
 )
-SimpleCov.start do
+# https://github.com/simplecov-ruby/simplecov/blob/ba57b3c07381e7d7d83c255309f371f816bf942d/lib/simplecov/profiles/rails.rb
+SimpleCov.start 'rails' do
   # @!parse
   #   extend SimpleCov::Configuration
 
   # this dir used by CircleCI
   add_filter 'vendor'
-  track_files '{app,lib}/**/*.rb'
+
+  add_group 'Scripts', 'script/'
+  track_files 'script/*'
+  add_filter 'script/create-script.sh'
+
   enable_coverage(:branch) # Report branch coverage to trigger branch-level undercover warnings
 end
 
