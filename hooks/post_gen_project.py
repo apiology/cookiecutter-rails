@@ -79,34 +79,44 @@ def create_docker_compose_db_onepass_entry(rails_env, port):
                       database=database)
 
 
-def verify_backup_file(filename):
-    orig_filename = filename[:-1]
-    new_filename = filename
-    print("Verifying backup file", filename)
+def verify_backup_file(tilde_filename):
+    base_filename = tilde_filename[:-1]
+    processed_filename = base_filename
+    rails_written_filename = processed_filename
+    orig_file = f"{base_filename}.orig"
+    # if orig_file exists
+    if os.path.exists(orig_file):
+        # before we applied any patches - we want to show a whole
+        # patch, not a partial one on top of our existing
+        rails_written_filename = orig_file
+    goal_filename = tilde_filename
+    print("Verifying backup file", tilde_filename)
 
     # if two files are identical, remove new one
-    with open(orig_filename, 'rb') as f:
-        orig_contents = f.read()
-    with open(new_filename, 'rb') as f:
-        new_contents = f.read()
-    if orig_contents == new_contents:
-        run(['rm', new_filename])
+    with open(processed_filename, 'rb') as f:
+        processed_contents = f.read()
+    with open(goal_filename, 'rb') as f:
+        goal_contents = f.read()
+    if processed_contents == goal_contents:
+        run(['rm', goal_filename])
         return
 
     errmsg = f'Found a file ending in ~: {filename}'
     # add the contents of old file and new file
     # to the error message
     errmsg += '\n'
-    errmsg += f'Old file: {orig_filename}\n'
-    with open(orig_filename) as f:
+    errmsg += f'Written file: {rails_written_filename}\n'
+    with open(rails_written_filename) as f:
         errmsg += f.read()
     errmsg += '\n'
-    errmsg += f'New file: {new_filename}\n'
-    with open(new_filename) as f:
+    errmsg += f'New file: {goal_filename}\n'
+    with open(goal_filename) as f:
         errmsg += f.read()
-    errmsg += f"Diff between files - save to {orig_filename}.patch\n"
+    errmsg += "Unexpected differences:"
+    errmsg += subprocess.getoutput(f'diff -u {processed_filename} {goal_filename}')
+    errmsg += f"Complete diff between files - save to {base_filename}.patch\n"
     # add diff to errmsg
-    errmsg += subprocess.getoutput(f'diff -u {orig_filename} {new_filename}')
+    errmsg += subprocess.getoutput(f'diff -u {rails_written_filename} {goal_filename}')
     raise RuntimeError(errmsg)
 
 
@@ -118,6 +128,15 @@ def verify_directory(directory):
             if filename.endswith('~'):
                 full_filename = os.path.join(root, filename)
                 verify_backup_file(full_filename)
+
+
+def remove_orig_files_in_directory(directory):
+    for root, dirs, files in os.walk(directory):
+        if big_and_irrelevant_directory(root):
+            continue
+        for filename in files:
+            if filename.endswith('.orig'):
+                run(['rm', os.path.join(root, filename)])
 
 
 def big_and_irrelevant_directory(root):
@@ -150,8 +169,11 @@ def diagnose_patch_error(patch_filename, target_file):
             print(f'Intended file:\n{tilde_file_contents}', flush=True, file=sys.stdout)
             # if orig path does not exist
             if not os.path.exists(orig_file):
+                print("No .orig file found", flush=True, file=sys.stdout)
                 # patch process errored out without processing any hunks
                 orig_file = target_file
+            else:
+                print("Found .orig file!")
             # show diff
             print(f"Save this as {target_file}.patch", flush=True, file=sys.stdout)
             print(subprocess.getoutput(f'diff -u {orig_file} {tilde_file}'),
@@ -168,7 +190,7 @@ def patch_directory(directory):
                 try:
                     full_filename = os.path.join(root, filename)
                     original_filename = full_filename[:-6]
-                    run(['patch', '--force', '-p0', '-i', full_filename])
+                    run(['patch', '--backup', '--force', '-p0', '-i', full_filename])
                     # delete file
                     run(['rm', full_filename])
                 except subprocess.CalledProcessError:
@@ -285,6 +307,8 @@ if __name__ == '__main__':
 
         # error out if we find any files that end in '~' recursively
         verify_directory('.')
+
+        remove_orig_files_in_directory('.')
 
     run('./fix.sh')
 

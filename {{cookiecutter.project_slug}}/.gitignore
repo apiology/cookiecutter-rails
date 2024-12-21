@@ -84,6 +84,10 @@ config/defs.rbi
 !/storage/.keep
 .byebug_history
 
+# Ignore make target files
+/.make/*
+!/.make/.keep
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
