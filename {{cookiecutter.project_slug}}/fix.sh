@@ -447,12 +447,6 @@ ensure_rugged_packages_installed() {
   fi
 }
 
-ensure_psych_packages_installed() {
-  if ! bundle check --dry-run 2>&1 | grep -c ' \* psych'
-  then
-    ensure_dev_library yaml.h libyaml libyaml-dev
-  fi
-}
 ensure_types_built() {
   make build-typecheck
 }
@@ -462,8 +456,6 @@ ensure_ruby_versions
 set_ruby_local_version
 
 ensure_rugged_packages_installed
-
-ensure_psych_packages_installed
 
 ensure_bundle
 
