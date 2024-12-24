@@ -17,7 +17,7 @@ help:
 
 default: clean-typecoverage typecheck typecoverage clean-coverage test coverage quality rubocop-ratchet ## run default typechecking, tests and quality
 
-SOURCE_FILES = $(shell find lib -name '*.rb' -type f)
+SOURCE_FILES = $(shell find lib -name '*.rb' -type f; find app -name '*.rb' -type f; find script -name '*.rb' -type f)
 
 config/defs.rbi: yardoc.installed ## Generate YARD documentation ## Generate RBS files
 	rm -f config/defs.rbi
@@ -36,9 +36,11 @@ build-typecheck: Gemfile.lock.installed types.installed  ## Fetch information th
 sorbet/tapioca/require.rb: sorbet/machine_specific_config
 	bin/tapioca init
 
-tapioca.installed: sorbet/machine_specific_config config/defs.rbi sorbet/tapioca/require.rb Gemfile.lock.installed ## Install Tapioca-generated type information
+tapioca.installed: sorbet/machine_specific_config config/defs.rbi sorbet/tapioca/require.rb Gemfile.lock.installed db/schema.rb ## Install Tapioca-generated type information
 	bin/tapioca gems
 	bin/tapioca annotations
+	RAILS_ENV=development bin/rails db:create
+	RAILS_ENV=development bin/rails db:migrate
 	bin/tapioca dsl
 	bin/tapioca todo
 	bin/spoom bump
