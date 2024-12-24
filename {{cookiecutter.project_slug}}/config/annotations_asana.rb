@@ -1,5 +1,5 @@
 # typed: strict
-# frozen_string_literal: true
+
 #
 # rubocop:disable Layout/LineLength
 # @!parse
@@ -21,6 +21,8 @@
 #       def users; end
 #       # @return [Asana::ProxiedResourceClasses::CustomField]
 #       def custom_fields; end
+#       # @return [Asana::ProxiedResourceClasses::Webhook]
+#       def webhooks; end
 #     end
 #     module Resources
 #       # https://developers.asana.com/reference/gettask
@@ -43,11 +45,11 @@
 #         def memberships; end
 #         class << self
 #           # @param client [Asana::Client]
-#           # @param assignee [String]
 #           # @param workspace [String]
-#           # @param name [String]
+#           # @param options [Hash]
 #           # @return [Asana::Resources::Task]
-#           def create(client, assignee:, workspace:, name:); end
+#           # @sg-ignore
+#           def create(client, workspace: nil, options: nil, **data); end
 #         end
 #       end
 #       class Section
@@ -63,11 +65,12 @@
 #       class Portfolio
 #         # @param options [Hash] the request I/O options
 #         # @return [Enumerable<Asana::Resources::Project>]
-#         def get_items(options = {}); end
+#         def get_items(options: {}); end
 #       end
 #     end
 #     module Errors
 #       class NotFound < ::Asana::Errors::APIError; end
+#       class InvalidRequest < ::Asana::Errors::APIError; end
 #     end
 #     module Resources
 #       class Workspace
@@ -152,7 +155,6 @@
 #         # @param completed_since [Time]
 #         # @param per_page [Integer]
 #         # @param modified_since [Time]
-#         # @param section [Asana::Resources::Section]
 #         # @param options [Hash] the request I/O options.
 #         # @return [Enumerable<Asana::Resources::Task>]
 #         def get_tasks(assignee: nil,
@@ -244,6 +246,23 @@
 #         #
 #         # @return [Asana::Resources::User]
 #         def me(options: {}); end
+#       end
+#       class Webhook
+#         # Returns the compact representation of all webhooks your app has
+#         # registered for the authenticated user in the given workspace.
+#         #
+#         # @param workspace [String] The workspace to query for webhooks in.
+#         # @param resource [String] Only return webhooks for the given resource.
+#         # @param per_page [Integer] the number of records to fetch per page.
+#         # @param options [Hash] the request I/O options.
+#         # @return [Array<Asana::Resources::Webhook>]
+#         def get_all(workspace: required("workspace"), resource: nil, per_page: 20, options: {})
+#         end
+#         # @param options [Hash] the request I/O options
+#         # @param data [Hash] the attributes to POST
+#         # @return [Asana::Resources::Webhook]
+#         def create_webhook(options: {}, **data)
+#         end
 #       end
 #     end
 #   end
