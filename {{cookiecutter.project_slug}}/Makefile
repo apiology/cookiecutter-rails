@@ -39,8 +39,10 @@ sorbet/tapioca/require.rb: sorbet/machine_specific_config
 tapioca.installed: sorbet/machine_specific_config config/defs.rbi sorbet/tapioca/require.rb Gemfile.lock.installed db/schema.rb ## Install Tapioca-generated type information
 	bin/tapioca gems
 	bin/tapioca annotations
-	RAILS_ENV=development bin/rails db:create
-	RAILS_ENV=development bin/rails db:migrate
+	if [ -f db/schema.rb ]; then \
+	  RAILS_ENV=development bin/rails db:create; \
+	  RAILS_ENV=development bin/rails db:migrate; \
+	fi
 	bin/tapioca dsl
 	bin/tapioca todo
 	bin/spoom bump
