@@ -209,6 +209,24 @@ jobs:
     working_directory: ~/{{cookiecutter.project_slug}}
     docker:
       - image: cimg/base:current
+        environment:
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_DATABASE: {{cookiecutter.project_slug}}_test
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_USERNAME: {{cookiecutter.project_slug}}
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PASSWORD: ""
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_SERVER: localhost
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PORT: "5432"
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_DATABASE: {{cookiecutter.project_slug}}_dev
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_USERNAME: {{cookiecutter.project_slug}}
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_PASSWORD: ""
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_SERVER: localhost
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_PORT: "5432"
+          RAILS_ENV: test
+      # https://thoughtbot.com/blog/circleci-2-rails
+      - image: postgres:latest
+        environment:
+          POSTGRES_USER: {{cookiecutter.project_slug}}
+          POSTGRES_DB: {{cookiecutter.project_slug}}_test
+          POSTGRES_HOST_AUTH_METHOD: trust
     steps:
       - quality
   build:
@@ -216,12 +234,16 @@ jobs:
     docker:
       - image: cimg/base:current
         environment:
-          # upper case and replace "-" with "_"
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_DATABASE: {{cookiecutter.project_slug}}_test
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_USERNAME: {{cookiecutter.project_slug}}
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PASSWORD: ""
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_SERVER: localhost
           {{cookiecutter.project_slug|upper|replace("-", "_")}}_TEST_DATABASE_PORT: "5432"
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_DATABASE: {{cookiecutter.project_slug}}_dev
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_USERNAME: {{cookiecutter.project_slug}}
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_PASSWORD: ""
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_SERVER: localhost
+          {{cookiecutter.project_slug|upper|replace("-", "_")}}_DEV_DATABASE_PORT: "5432"
           RAILS_ENV: test
       # https://thoughtbot.com/blog/circleci-2-rails
       - image: postgres:latest
