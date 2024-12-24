@@ -46,6 +46,8 @@ tapioca.installed: sorbet/machine_specific_config config/defs.rbi sorbet/tapioca
 	bin/spoom bump
 	touch tapioca.installed
 
+db/schema.rb:
+
 yardoc.installed: $(wildcard config/annotations_*.rb) $(SOURCE_FILES) ## Generate YARD documentation
 	bin/yard doc \{config,lib,app,script\}/**/*.rb ext/**/*.\{c,rb}
 	touch yardoc.installed
