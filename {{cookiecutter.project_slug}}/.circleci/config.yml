@@ -104,6 +104,8 @@ commands:
             - "/home/circleci/.cache/rubocop_cache"
             - "/home/circleci/.cache/gem"
             - "/home/circleci/.bundle/cache"
+            - ".make/pg_gem_dependencies"
+            - ".bundle"
       - run:
           name: Download new circleci tool
           command: |
