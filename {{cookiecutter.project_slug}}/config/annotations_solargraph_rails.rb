@@ -69,14 +69,14 @@
 #     # @return [void]
 #     def configure(&block); end
 #   end
-#   class Rails
+#   module Rails
 #     # @return [Rails::Application]
 #     def self.application; end
 #   end
 #   class Rails::Application
 #     # @return [ActionDispatch::Routing::RouteSet]
 #     def routes; end
-#     include Rails::Railtie
+#     # include Rails::Railtie
 #   end
 #   class ActionDispatch::Routing::RouteSet
 #     # @yieldself [ActionDispatch::Routing::Mapper]
