@@ -109,20 +109,39 @@ Gemfile.lock: Gemfile
 	make .bundle/config
 	bundle lock
 
-gem_dependencies: .make/pg_gem_dependencies .bundle/config
+.make/pg_gem_dependencies:
+	for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config; \
+	do \
+	  if [ -f "$${possible_pg_config_path}" ]; \
+	  then \
+	    bundle config set build.pg --with-pg-config="$${possible_pg_config_path}"; \
+	  fi \
+	done
+	touch .make/pg_gem_dependencies
+
+.make/psych_gem_dependencies: Gemfile.lock
+	set -e; \
+	if (bin/bundle check --dry-run 2>&1 || true) | grep ' \* psych' >/dev/null; \
+	then \
+	  echo "Installing requirements for psych"; \
+	  bin/ensure_dev_library yaml.h libyaml libyaml-dev; \
+	  bin/ensure_package pkg-config; \
+	fi
+	touch .make/psych_gem_dependencies
+
+gem_dependencies: .bundle/config .make/psych_gem_dependencies .make/pg_gem_dependencies
 
 # Ensure any Gemfile.lock changes, even pulled form git, ensure a
 # bundle is installed.
-Gemfile.lock.installed: .make/pg_gem_dependencies Gemfile.lock Gemfile
-	bundle install
+Gemfile.lock.installed: Gemfile vendor/.keep
 	touch Gemfile.lock.installed
 
 vendor/.keep: Gemfile.lock
-	make .bundle/config
+	make gem_dependencies
 	bundle install
 	touch vendor/.keep
 
-.bundle/config:
+.bundle/config: .make/pg_gem_dependencies
 	touch .bundle/config
 
 bundle_install: Gemfile.lock.installed ## Install Ruby dependencies
@@ -180,16 +199,6 @@ update_apt: .make/apt_updated
 	touch .make/apt_updated
 
 cicoverage: coverage ## check code coverage
-
-.make/pg_gem_dependencies:
-	for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config; \
-	do \
-	  if [ -f "$${possible_pg_config_path}" ]; \
-	  then \
-	    bundle config set build.pg --with-pg-config="$${possible_pg_config_path}"; \
-	  fi \
-	done
-	touch .make/pg_gem_dependencies
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall
