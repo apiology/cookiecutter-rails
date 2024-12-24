@@ -1,0 +1,7 @@
+--dir
+.
+--ignore=tmp/
+--ignore=vendor/
+--ignore=*.sh
+--did-you-mean=false
+@sorbet/machine_specific_config

@@ -19,6 +19,7 @@ commands:
             export PATH="${HOME}/.pyenv/bin:${PATH}"
             export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
             export PATH="${HOME}/project/node_modules/.bin:${PATH}"
+            export PATH="$(pwd)/bin:${PATH}"
             eval "$(pyenv init --path)"
             eval "$(pyenv virtualenv-init -)"
             eval "$(rbenv init -)"
@@ -48,16 +49,18 @@ commands:
               touch -ht ${touchtime} "${filename}"
             done
       - restore_cache:
-          keys:
-            - pyenv-v2-{{ checksum "requirements_dev.txt" }}-
-            - pyenv-v2-
-            - pyenv-
-      - restore_cache:
+          name: Restore child rbenv cache
           keys:
             - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}- # yamllint disable-line rule:line-length
             - child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-
             - child-rbenv-v3-
             - child-rbenv-
+      - restore_cache:
+          name: Restore pyenv cache
+          keys:
+            - pyenv-v2-{{ checksum "requirements_dev.txt" }}-
+            - pyenv-v2-
+            - pyenv-
       - run:
           name: Initialize packages
           command: |
@@ -70,6 +73,8 @@ commands:
             export BUNDLE_PATH
             GEM_HOME="${BUNDLE_PATH}/ruby/3.3.0"
             export GEM_HOME
+            PATH="$(pwd)/bin:${PATH}"
+            export PATH
 
             './fix.sh'
 
@@ -82,6 +87,7 @@ commands:
       - store_artifacts:
           path: /tmp/fix_sh_timing.log
       - save_cache:
+          name: 'Save pyenv cache'
           key: pyenv-v2-{{ checksum "requirements_dev.txt" }}-{{ checksum ".python-version" }}
           paths:
             - "requirements_dev.txt.installed"
@@ -171,12 +177,19 @@ jobs:
             - store_artifacts:
                 path: /tmp/child_fix_sh_timing.log
             - save_cache:
+                name: 'Save child rbenv cache'
                 key: child-rbenv-v3-{{ checksum "{{cookiecutter.project_slug}}/Gemfile.patch" }}-{{ checksum "hooks/post_gen_project.py" }}-{{ checksum "Gemfile.lock" }}-{{ checksum ".ruby-version" }} # yamllint disable-line rule:line-length
                 paths:
-                  - "vendor/bundle"
                   - "Gemfile.lock.installed"
-                  - "/home/circleci/.cache/solargraph"
+                  - "vendor/bundle"
                   - "/home/circleci/.rbenv"
+                  - "/home/circleci/.cache/solargraph"
+                  - "/home/circleci/.sorbet-cache"
+                  - "/home/circleci/.cache/sorbet"
+                  - "/home/circleci/.cache/rubocop_cache"
+                  - "/home/circleci/.cache/gem"
+                  - "/home/circleci/.bundle/cache"
+                  - ".bundle"
       - when:
           condition:
             equal: [<< pipeline.git.branch >>, "main"]

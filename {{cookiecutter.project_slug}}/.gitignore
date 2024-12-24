@@ -43,6 +43,10 @@ Gemfile.lock.installed
 requirements_dev.txt.installed
 types.installed
 tapioca.installed
+yardoc.installed
+
+# Type checking config
+sorbet/machine_specific_config
 
 # generated from local source
 config/defs.rbi
@@ -55,7 +59,6 @@ config/defs.rbi
 /.ruby-version
 
 # Ruby-related
-/.bundle/
 /.yardoc
 /_yardoc/
 /doc/
@@ -64,9 +67,6 @@ config/defs.rbi
 /tmp/
 /coverage/
 /pkg
-
-# Ignore bundler config.
-/.bundle
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -83,6 +83,9 @@ config/defs.rbi
 /storage/*
 !/storage/.keep
 .byebug_history
+
+# Ignore bundler config.
+/.bundle/config
 
 # Ignore make target files
 /.make/*
