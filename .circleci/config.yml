@@ -73,10 +73,12 @@ commands:
             export BUNDLE_PATH
             GEM_HOME="${BUNDLE_PATH}/ruby/3.3.0"
             export GEM_HOME
+            PATH="$(pwd)/bin:${PATH}"
+            export PATH
 
             './fix.sh'
 
-            export PATH="$(pwd)/bin:${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
+            export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
             eval "$(rbenv init -)"
 
             # Use most recent Ruby version as the global version;
