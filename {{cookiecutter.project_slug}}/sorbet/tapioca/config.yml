@@ -3,6 +3,7 @@ gem:
   #
   exclude:
     - solargraph
+    - solargraph-rails
   # doc: true
   # workers: 5
 dsl:
