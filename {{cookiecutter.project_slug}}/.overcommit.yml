@@ -43,8 +43,10 @@ PreCommit:
     enabled: true
     exclude:
       # generated files:
-      - 'sorbet/rbi/gems'
+      - 'sorbet/rbi/gems/**/*.rbi'
       - 'lib/tasks/auto_annotate_models.rake'
+      # don't freak out over line below
+      - '.overcommit'
     keywords: ['BROKEN', 'BUG', 'ERROR', 'FIXME', 'HACK', 'OPTIMIZE', 'REVIEW', 'TODO', 'WTF', 'XXX']
   PythonFlake8:
     enabled: true
