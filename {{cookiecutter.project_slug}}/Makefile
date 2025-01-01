@@ -1,4 +1,4 @@
-.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default feature gem_dependencies help localtest overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
+.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default gem_dependencies help localtest overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -15,15 +15,17 @@ export PRINT_HELP_PYSCRIPT
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-default: clean-typecoverage typecheck typecoverage clean-coverage test coverage quality rubocop-ratchet ## run default typechecking, tests and quality
+default: clean-typecoverage typecheck typecoverage clean-coverage test coverage overcommit_branch quality rubocop-ratchet ## run default typechecking, tests and quality
 
-SOURCE_FILES = $(shell find lib -name '*.rb' -type f; find app -name '*.rb' -type f; find script -name '*.rb' -type f)
+SOURCE_FILE_GLOBS = ['{config,lib,app,script}/**/*.rb', 'ext/**/*.{c,rb}']
 
-config/defs.rbi: yardoc.installed ## Generate YARD documentation ## Generate RBS files
-	rm -f config/defs.rbi
-	bundle exec sord --replace-errors-with-untyped --no-regenerate config/defs.rbi
+SOURCE_FILES := $(shell ruby -e "puts Dir.glob($(SOURCE_FILE_GLOBS))")
 
-types.installed: tapioca.installed Gemfile.lock Gemfile.lock.installed config/defs.rbi sorbet/tapioca/require.rb sorbet/rbi/todo.rbi sorbet/config ## Install Ruby dependencies
+rbi/{{cookiecutter.project_slug}}.rbi: yardoc.installed ## Generate Sorbet types from Yard docs
+	rm -f rbi/{{cookiecutter.project_slug}}.rbi
+	bundle exec sord --replace-errors-with-untyped --exclude-messages OMIT --no-regenerate rbi/{{cookiecutter.project_slug}}.rbi
+
+types.installed: tapioca.installed Gemfile.lock Gemfile.lock.installed rbi/{{cookiecutter.project_slug}}.rbi sorbet/tapioca/require.rb sorbet/config ## Ensure typechecking dependencies are in place
 	bundle exec yard gems 2>&1 || bundle exec yard gems --safe 2>&1 || bundle exec yard gems 2>&1
 	# bundle exec solargraph scan 2>&1
 	touch types.installed
@@ -36,27 +38,27 @@ build-typecheck: Gemfile.lock.installed types.installed  ## Fetch information th
 sorbet/tapioca/require.rb: sorbet/machine_specific_config
 	bin/tapioca init
 
-tapioca.installed: sorbet/machine_specific_config config/defs.rbi sorbet/tapioca/require.rb Gemfile.lock.installed db/schema.rb ## Install Tapioca-generated type information
+tapioca.installed: sorbet/machine_specific_config sorbet/tapioca/require.rb Gemfile.lock.installed db/schema.rb ## Install Tapioca-generated type information
 	bin/tapioca gems
 	bin/tapioca annotations
 	if [ -f db/schema.rb ]; then \
 	  RAILS_ENV=development bin/rails db:create; \
 	  RAILS_ENV=development bin/rails db:migrate; \
+	  bin/tapioca dsl; \
 	fi
-	bin/tapioca dsl
 	bin/tapioca todo
-	bin/spoom bump
+	bin/spoom srb bump
 	touch tapioca.installed
 
 db/schema.rb:
 
 yardoc.installed: $(wildcard config/annotations_*.rb) $(SOURCE_FILES) ## Generate YARD documentation
-	bin/yard doc \{config,lib,app,script\}/**/*.rb ext/**/*.\{c,rb}
+	bin/yard doc $?
 	touch yardoc.installed
 
 clean-typecheck: ## Refresh the easily-regenerated information that type checking depends on
 	bin/solargraph clear || true
-	rm -fr .yardoc/ config/defs.rbi types.installed yardoc.installed
+	rm -fr .yardoc/ rbi/{{cookiecutter.project_slug}}.rbi types.installed yardoc.installed
 {% if cookiecutter.use_checkoff %}	rm -fr ../checkoff/.yardoc || true
 {% endif %}	echo all clear
 
@@ -69,7 +71,7 @@ realclean: clean realclean-typecheck
 	rm .make/*
 	rm *.installed
 
-typecheck: config/defs.rbi build-typecheck ## validate types in code and configuration
+typecheck: build-typecheck ## validate types in code and configuration
 	bin/srb tc
 	bin/solargraph typecheck --level strong
 
@@ -99,7 +101,7 @@ docker-web: config/env config/env.rails  ## bring up docker compose with web app
 docker: config/env config/env.rails docker-start  ## bring up docker compose with databases running
 	@docker compose up -d dev_database test_database
 
-config/env: config/env.1p
+config/env: config/env.1p  ## Create file suitable for docker-compose usage
 	cat config/env.1p | cut -d= -f1 > config/env
 
 config/env.rails: config/env.rails.1p
@@ -137,7 +139,7 @@ Gemfile.lock: Gemfile
 
 gem_dependencies: .bundle/config .make/psych_gem_dependencies .make/pg_gem_dependencies
 
-# Ensure any Gemfile.lock changes, even pulled form git, ensure a
+# Ensure any Gemfile.lock changes, even pulled from git, ensure a
 # bundle is installed.
 Gemfile.lock.installed: Gemfile vendor/.keep
 	touch Gemfile.lock.installed
@@ -155,7 +157,7 @@ bundle_install: Gemfile.lock.installed ## Install Ruby dependencies
 clear_metrics: ## remove or reset result artifacts created by tests and quality tools
 	bundle exec rake clear_metrics || true
 
-clean: clean-typecheck clean-coverage clear_metrics ## remove all built artifacts
+clean: clear_metrics clean-typecoverage clean-typecheck clean-coverage ## remove all built artifacts
 
 test: spec ## run tests quickly
 
@@ -163,6 +165,9 @@ citest: test ## Run unit tests from CircleCI
 
 overcommit: ## run precommit quality checks
 	bundle exec overcommit --run
+
+overcommit_branch: ## run precommit quality checks only on changed files
+	@bundle exec overcommit_branch
 
 quality: overcommit ## run precommit quality checks
 
@@ -182,16 +187,10 @@ test: spec ## run tests quickly
 spec: ## Run lower-level tests
 	@bundle exec rake spec
 
-feature: ## Run higher-level tests
-	@bundle exec rake feature
-
-localtest: ## run default local actions
-	@bundle exec rake localtest
-
-repl: bundle_install
+repl: bundle_install ## Launch an interactive development shell
 	rails c
 
-clean-coverage: clear_metrics
+clean-coverage: clear_metrics ## Clean out previous output of test coverage to avoid flaky results from previous runs
 
 coverage: test report-coverage ## check code coverage
 	@bundle exec rake undercover
@@ -204,7 +203,7 @@ update_apt: .make/apt_updated
 	sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
 	touch .make/apt_updated
 
-cicoverage: coverage ## check code coverage
+cicoverage: citest coverage ## check code coverage
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall
@@ -222,7 +221,7 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
 	git add config/credentials.yml.enc Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
-	bundle update --conservative nokogiri rexml yard rails-html-sanitizer || true
+	bundle update --conservative json nokogiri rexml yard rails-html-sanitizer || true
 	make build-typecheck
 	bundle install || true
 	git add Gemfile.lock || true
