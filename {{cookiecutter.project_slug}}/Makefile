@@ -44,8 +44,8 @@ tapioca.installed: sorbet/machine_specific_config sorbet/tapioca/require.rb Gemf
 	if [ -f db/schema.rb ]; then \
 	  RAILS_ENV=development bin/rails db:create; \
 	  RAILS_ENV=development bin/rails db:migrate; \
+	  bin/tapioca dsl; \
 	fi
-	bin/tapioca dsl
 	bin/tapioca todo
 	bin/spoom srb bump
 	touch tapioca.installed
