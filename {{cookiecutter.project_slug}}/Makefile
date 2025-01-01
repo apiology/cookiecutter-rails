@@ -1,4 +1,4 @@
-.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default feature gem_dependencies help localtest overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
+.PHONY: build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default gem_dependencies help localtest overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -159,7 +159,7 @@ clear_metrics: ## remove or reset result artifacts created by tests and quality 
 
 clean: clear_metrics clean-typecoverage clean-typecheck clean-coverage ## remove all built artifacts
 
-test: spec feature ## run tests quickly
+test: spec ## run tests quickly
 
 citest: test ## Run unit tests from CircleCI
 
@@ -186,9 +186,6 @@ test: spec ## run tests quickly
 
 spec: ## Run lower-level tests
 	@bundle exec rake spec
-
-feature: ## Run higher-level tests
-	@bundle exec rake feature
 
 repl: bundle_install ## Launch an interactive development shell
 	rails c
