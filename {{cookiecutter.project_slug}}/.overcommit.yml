@@ -41,6 +41,11 @@ PreCommit:
     problem_on_unmodified_line: warn
   FixMe:
     enabled: true
+    exclude:
+      # generated files:
+      - 'sorbet/rbi/gems'
+      - 'lib/tasks/auto_annotate_models.rake'
+    keywords: ['BROKEN', 'BUG', 'ERROR', 'FIXME', 'HACK', 'OPTIMIZE', 'REVIEW', 'TODO', 'WTF', 'XXX']
   PythonFlake8:
     enabled: true
     on_warn: fail
