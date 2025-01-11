@@ -150,6 +150,8 @@ PrePush:
       - 'clear_metrics'
       - 'spec'
       - 'undercover'
+    env:
+      RAILS_ENV: test
   CustomScript:
     enabled: true
     requires_files: false
