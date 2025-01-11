@@ -113,6 +113,9 @@ def test_bake_and_run_build(cookies):
             assert b'run precommit quality checks' in \
                 output
         license_file_path = result.project_path / 'LICENSE'
+        circle_ci_config = result.project_path / '.circleci' / 'config.yml'
+        # ensure no unresolved ninja comments remain in .yml file
+        assert 'cookiecutter.' not in circle_ci_config.open().read()
         now = datetime.datetime.now()
         assert str(now.year) in license_file_path.open().read()
         print("path:", str(result.project_path))

@@ -231,8 +231,9 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git checkout cookiecutter-template && git push --no-verify
 	git checkout main; overcommit --sign && overcommit --sign pre-commit && git checkout main && git pull && git checkout -b update-from-cookiecutter-$$(date +%Y-%m-%d-%H%M)
 	git merge cookiecutter-template || true
-	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
+	git checkout --theirs sorbet/rbi/gems || true
 	git add config/credentials.yml.enc Gemfile.lock || true
+	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
 	bundle update --conservative json nokogiri rexml yard rails-html-sanitizer || true
 	( make build && git add Gemfile.lock ) || true
