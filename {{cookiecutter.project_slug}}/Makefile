@@ -124,7 +124,7 @@ Gemfile.lock: Gemfile
 	bundle lock
 
 .make/pg_gem_dependencies:
-	for possible_pg_config_path in /opt/homebrew/opt/libpq/bin/pg_config /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config; \
+	for possible_pg_config_path in /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config /opt/homebrew/opt/libpq/bin/pg_config ; \
 	do \
 	  if [ -f "$${possible_pg_config_path}" ]; \
 	  then \
