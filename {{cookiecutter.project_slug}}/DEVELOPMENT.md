@@ -60,10 +60,7 @@ You can set `LOG_LEVEL` locally as well.
 ## Setting up ngrok
 
 ```sh
-# M-x shell
-# M-x rename-buffer *ngrok*
-ngrok http http://localhost:3000 # brew install ngrok/ngrok/ngrok
-# Go to http://127.0.0.1:4040/status or https://dashboard.ngrok.com/cloud-edge/endpoints to get endpoints
+make ngrok
 ```
 
 When done, set URL in your dependency to `${HEROKU_URL}`
