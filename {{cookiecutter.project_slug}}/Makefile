@@ -133,7 +133,7 @@ Gemfile.lock: Gemfile
 	done
 	touch .make/pg_gem_dependencies
 
-.make/psych_gem_dependencies:
+.make/psych_gem_dependencies: Gemfile.lock
 	set -e; \
 	if (bin/bundle check --dry-run 2>&1 || true) | grep ' \* psych' >/dev/null; \
 	then \
