@@ -1,4 +1,4 @@
-.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default gem_dependencies help overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
+.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default gem_dependencies help ngrok overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -210,6 +210,13 @@ update_apt: .make/apt_updated
 	touch .make/apt_updated
 
 cicoverage: citest coverage ## check code coverage
+
+ngrok: ## Start ngrok to expose local server to the internet
+	@ngrok http http://localhost:3000 >/dev/null 2>&1 || true # brew install ngrok/ngrok/ngrok
+	@sleep 2
+	@echo "Configure [app components](https://app.asana.com/0/my-apps/895499885393836/rule-actions) with the URL provided:" >&2
+	@curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[] | select(.config.addr == "http://localhost:3000") | .public_url'
+
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bundle exec overcommit --uninstall
