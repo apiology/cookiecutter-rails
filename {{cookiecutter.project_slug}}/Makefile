@@ -48,9 +48,14 @@ tapioca.installed: sorbet/machine_specific_config sorbet/tapioca/require.rb Gemf
 	bin/tapioca gems
 	bin/tapioca annotations
 	if [ -f db/schema.rb ]; then \
+	  set -e; \
 	  RAILS_ENV=development bin/rails db:create; \
 	  RAILS_ENV=development bin/rails db:migrate; \
-	  bin/tapioca dsl; \
+	  if ! bin/tapioca dsl 2>/dev/null; \
+	  then \
+	    echo "Tapioca parallel dsl failed, retrying with single worker"; \
+	    bin/tapioca dsl --workers 1; \
+	  fi; \
 	fi
 	bin/tapioca todo
 	bin/spoom srb bump
