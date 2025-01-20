@@ -313,6 +313,7 @@ if __name__ == '__main__':
 
         remove_orig_files_in_directory('.')
 
+    run(['touch', 'Gemfile', 'Gemfile.lock'])
     run('./fix.sh')
 
     run(['bin/rubocop', '-A', '--disable-uncorrectable'])
