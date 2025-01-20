@@ -37,7 +37,7 @@ types.installed: tapioca.installed Gemfile.lock Gemfile.lock.installed rbi/{{coo
 	# touching yardoc.installed so we don't end up in a vicious
 	# cycle
 	touch yardoc.installed rbi/{{cookiecutter.project_slug}}.rbi
-	# bundle exec solargraph scan 2>&1
+	# bin/solargraph scan 2>&1
 	touch types.installed
 
 build: bundle_install pip_install build-typecheck ## Update 3rd party packages as well and produce any artifacts needed from code
@@ -90,6 +90,7 @@ realclean-typecheck: clean-typecheck ## Remove all type checking artifacts
 realclean: clean realclean-typecheck
 	rm -fr vendor/bundle .bundle
 	rm -f .make/*
+	rm *.installed
 
 typecheck: build-typecheck ## validate types in code and configuration
 	bin/srb tc
@@ -247,7 +248,7 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git checkout --theirs sorbet/rbi/gems || true
 	git add config/credentials.yml.enc Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
-	bundle update --conservative json nokogiri rexml yard rails-html-sanitizer || true
+	bundle update --conservative json nokogiri rexml yard rails-html-sanitizer brakeman || true
 	( make build && git add Gemfile.lock ) || true
 	bin/spoom srb bump || true
 	bin/overcommit --install || true
