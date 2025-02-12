@@ -1,0 +1,11 @@
+---
+output_file:
+  rbi: rbi/{{cookiecutter.project_slug}}-parlour.rbi
+strictness: 'true'
+parser:
+  included_paths:
+    - lib
+    - app
+    - spec
+    - .git-hooks
+  excluded_paths: []

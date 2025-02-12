@@ -1,4 +1,5 @@
-.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-build clean-coverage clean-pyc clean-typecheck clean-typecoverage coverage default gem_dependencies help overcommit quality test typecheck typecoverage update_from_cookiecutter
+.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-build clean-coverage clean-pyc clean-typecheck clean-typecoverage coverage default docs gem_dependencies help overcommit quality repl test typecheck typecoverage update_from_cookiecutter
+
 .DEFAULT_GOAL := default
 
 define PRINT_HELP_PYSCRIPT
@@ -31,6 +32,8 @@ types.installed: Gemfile.lock Gemfile.lock.installed ## Ensure typechecking depe
 	touch types.installed
 
 build-typecheck: types.installed  ## Fetch information that type checking depends on
+
+docs: ## Generate documentation
 
 clean-typecheck: ## Refresh the easily-regenerated information that type checking depends on
 	rm -fr .mypy_cache
@@ -89,8 +92,7 @@ requirements_dev.txt.installed: requirements_dev.txt
 
 pip_install: requirements_dev.txt.installed ## Install Python dependencies
 
-Gemfile.lock: Gemfile
-	make .bundle/config
+Gemfile.lock: Gemfile .bundle/config
 	bundle lock
 
 .bundle/config:
@@ -101,9 +103,10 @@ gem_dependencies: .bundle/config
 # Ensure any Gemfile.lock changes, even pulled from git, ensure a
 # bundle is installed.
 Gemfile.lock.installed: Gemfile vendor/.keep
+	bundle install
 	touch Gemfile.lock.installed
 
-vendor/.keep: Gemfile.lock
+vendor/.keep: Gemfile.lock .ruby-version
 	make gem_dependencies
 	bundle install
 	touch vendor/.keep
@@ -125,10 +128,10 @@ citest:  ## Run unit tests from CircleCI
 	pytest --maxfail=1 tests/test_bake_project.py -v
 
 overcommit: ## run precommit quality checks
-	bundle exec overcommit --run
+	bin/overcommit --run
 
 overcommit_branch: ## run precommit quality checks only on changed files
-	@bundle exec overcommit_branch
+	@bin/overcommit_branch
 
 quality: lint overcommit ## run precommit quality checks
 
@@ -158,15 +161,17 @@ update_apt: .make/apt_updated
 cicoverage: citest ## check code coverage
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
-	bundle exec overcommit --uninstall
+	bin/overcommit --uninstall
 	git checkout main && git pull && git checkout -b update-from-upstream-cookiecutter-$$(date +%Y-%m-%d-%H%M)
+	git checkout main; overcommit --sign && overcommit --sign pre-commit && overcommit --sign pre-push && git checkout main && git pull && git checkout -b update-from-cookiecutter-$$(date +%Y-%m-%d-%H%M)
 	git fetch cookiecutter-upstream
 	git fetch -a
 	git merge cookiecutter-upstream/main --allow-unrelated-histories || true
+	git checkout --ours Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
-	bundle update --conservative rexml || true
+	bundle update --conservative json rexml || true
 	( make build && git add Gemfile.lock ) || true
-	bundle exec overcommit --install || true
+	bin/overcommit --install || true
 	@echo
 	@echo "Please resolve any merge conflicts below and push up a PR with:"
 	@echo

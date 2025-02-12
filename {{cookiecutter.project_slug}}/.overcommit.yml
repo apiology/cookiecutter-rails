@@ -106,8 +106,9 @@ PreCommit:
       - ".markdownlint_style.rb"
   Sorbet:
     enabled: true
-    command: ['bin/srb-overcommit']
+    command: ['bin/srb-overcommit', 'tc', '--suppress-error-code', '4010']
     problem_on_unmodified_line: report
+    include: '**/*.rb,.*/**/*.rb'
   Punchlist:
     command: ['bundle', 'exec', 'punchlist']
     enabled: true
@@ -156,6 +157,7 @@ PrePush:
     enabled: true
     requires_files: false
     required_executable: 'bin/git-commit-validate'
+
 
 #PostCheckout:
 #  ALL: # Special hook name that customizes all hooks of this type
