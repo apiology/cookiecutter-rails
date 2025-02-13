@@ -114,7 +114,7 @@ def verify_backup_file(tilde_filename):
         errmsg += f.read()
     errmsg += "Unexpected differences:"
     errmsg += subprocess.getoutput(f'diff -u {processed_filename} {goal_filename}')
-    errmsg += f"Complete diff between files - save to {base_filename}.patch\n"
+    errmsg += f"\nComplete diff between files - save to {base_filename}.patch\n"
     # add diff to errmsg
     errmsg += subprocess.getoutput(f'diff -u {rails_written_filename} {goal_filename}')
     raise RuntimeError(errmsg)
