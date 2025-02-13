@@ -44,6 +44,8 @@ commands:
       - restore_cache:
           name: Restore rbenv cache
           keys:
+            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}- # yamllint disable-line rule:line-length
+            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-
             - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
             - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-
             - rbenv-v5-
@@ -51,9 +53,11 @@ commands:
       - restore_cache:
           name: Restore ruby-types cache
           keys:
-            - ruby-types-v1-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
-            - ruby-types-v1-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-
-            - ruby-types-v1-
+            - ruby-types-v2-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}- # yamllint disable-line rule:line-length
+            - ruby-types-v2-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-
+            - ruby-types-v2-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
+            - ruby-types-v2-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-
+            - ruby-types-v2-
             - ruby-types-
       - restore_cache:
           name: Restore pyenv cache
@@ -84,17 +88,19 @@ commands:
             - "/home/circleci/.pyenv"
       - save_cache:
           name: 'Save rbenv cache'
-          key: rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %} # yamllint disable-line rule:line-length
+          key: rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %} # yamllint disable-line rule:line-length
           paths:
             - "Gemfile.lock.installed"
             - 'vendor/.keep'
             - "vendor/bundle"
             - "/home/circleci/.rbenv"
-            - ".bundle"
             - "/home/circleci/.cache/rubocop_cache"
             - "/home/circleci/.cache/gem"
             - "/home/circleci/.bundle/cache"
             - ".bundle"
+            - ".ruby-version"
+            # pg_gem_dependencies is just marking that we modified .bundle/config
+            - ".make/pg_gem_dependencies"
       - run:
           name: Download new circleci tool
           command: |
@@ -112,6 +118,7 @@ commands:
             git config --global user.name "Test Test"
             bundle exec overcommit --sign
             bundle exec overcommit --sign pre-commit
+            bundle exec overcommit --sign pre-push
 
             bundle exec overcommit --run
       - run_with_languages:
@@ -190,7 +197,9 @@ commands:
             # https://app.circleci.com/pipelines/github/apiology/"${package}"-rails/806/workflows/40fdf1ef-fa23-421b-a0f1-641ea0ed1641/jobs/1173
             #
             bundle exec overcommit --sign pre-commit
-            bundle exec git commit -m "Bump dependency releases" Gemfile.lock || true
+            bundle exec overcommit --sign pre-push
+            bundle exec git add Gemfile.lock sorbet
+            bundle exec git commit -m "Bump dependency releases"
             OVERCOMMIT_DEBUG=1 bundle exec git push --set-upstream origin "${CIRCLE_BRANCH:?}"
             echo "Avoiding double build after git push"
             exit 1
@@ -253,9 +262,11 @@ jobs:
       - run:
           name: Verify deltas
           command: |
-            if ! git diff --exit-code .
+            if [ -n "$(git status --porcelain)" ]
             then
-              >&2 echo "Please resolve changes to avoid caching difficulties"
+              git status --porcelain
+              git diff -u .
+              >&2 echo "Please check in all files"
               exit 1
             fi
       - run_with_languages:
@@ -266,7 +277,7 @@ jobs:
           path: rbi/{{cookiecutter.project_slug}}.rbi
       - save_cache:
           name: 'Save ruby-types cache'
-          key: ruby-types-v1-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %}-{% raw %}{{ checksum {% endraw %}"rbi/{{cookiecutter.project_slug}}.rbi" {% raw %}}}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}  # yamllint disable-line rule:line-length
+          key: ruby-types-v2-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}-{% raw %}{{ checksum ".ruby-version" }}{% endraw %}-{% raw %}{{ checksum {% endraw %}"rbi/{{cookiecutter.project_slug}}.rbi" {% raw %}}}{% endraw %}  # yamllint disable-line rule:line-length
           paths:
             - ".yardoc"
             - "/home/circleci/.cache/solargraph"
@@ -275,6 +286,7 @@ jobs:
             - "types.installed"
             - "yardoc.installed"
             - "tapioca.installed"
+            - "sorbet/machine_specific_config"
             - "rbi/{{cookiecutter.project_slug}}.rbi"
       - run_with_languages:
           label: Test
