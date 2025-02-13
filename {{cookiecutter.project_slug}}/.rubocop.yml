@@ -148,11 +148,6 @@ RSpec/VerifiedDoubleReference:
   Enabled: true
 
 Style/BlockComments:
-  Exclude:
-    # keep to what rails generates
-    - 'spec/spec_helper.rb'
-
-Style/BlockComments:
   # Adjust style to match what 'rails g rspec:install' will show the fewest
   # diffs with
   Exclude:
