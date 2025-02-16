@@ -7,19 +7,23 @@
 # instead of pasting it into an existing one.
 #
 # @!parse
+#   class Hash
+#       # @return [self]
+#       def with_indifferent_access; end
+#   end
 #   module AbstractController
 #     module Callbacks
 #       module ClassMethods
-#         # @param names [Array<Symbol>]
+#         # @param names [Symbol]
 #         # @return [void]
 #         def before_action(*names, &block); end
-#         # @param names [Array<Symbol>]
+#         # @param names [Symbol]
 #         # @return [void]
 #         def prepend_before_action(*names, &block); end
-#         # @param names [Array<Symbol>]
+#         # @param names [Symbol]
 #         # @return [void]
 #         def skip_before_action(*names, &block); end
-#         # @param names [Array<Symbol>]
+#         # @param names [Symbol]
 #         # @return [void]
 #         def around_action(*names, &block); end
 #       end
