@@ -191,7 +191,7 @@ vendor/.keep: Gemfile.lock .ruby-version
 	bundle install
 	touch vendor/.keep
 
-.bundle/config: .make/pg_gem_dependencies
+.bundle/config:
 	touch .bundle/config
 
 bundle_install: Gemfile.lock.installed ## Install Ruby dependencies
