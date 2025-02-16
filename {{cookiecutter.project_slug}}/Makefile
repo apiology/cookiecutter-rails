@@ -56,7 +56,7 @@ build: bundle_install pip_install build-typecheck ## Update 3rd party packages a
 sorbet/machine_specific_config:
 	echo "--cache-dir=$$HOME/.sorbet-cache" > sorbet/machine_specific_config
 
-sorbet/rbi/todo.rbi: rbi/{{cookiecutter.project_slug}}.rbi tapioca.installed
+sorbet/rbi/todo.rbi: sorbet/tapioca/require.rb rbi/{{cookiecutter.project_slug}}.rbi tapioca.installed
 	bin/tapioca todo
 
 build-typecheck: Gemfile.lock.installed types.installed sorbet/machine_specific_config sorbet/rbi/todo.rbi ## Fetch information that type checking depends on
@@ -184,7 +184,6 @@ gem_dependencies: .bundle/config .make/psych_gem_dependencies .make/pg_gem_depen
 # Ensure any Gemfile.lock changes, even pulled from git, ensure a
 # bundle is installed.
 Gemfile.lock.installed: Gemfile vendor/.keep
-	bundle install
 	touch Gemfile.lock.installed
 
 vendor/.keep: Gemfile.lock .ruby-version
@@ -267,10 +266,9 @@ update_from_cookiecutter: ## Bring in changes from template project used to crea
 	git merge cookiecutter-template || true
 	git checkout --ours config/credentials.yml.enc Gemfile.lock || true
 	git checkout --theirs sorbet/rbi/gems || true
-	git add config/credentials.yml.enc Gemfile.lock || true
 	# update frequently security-flagged gems while we're here
 	bundle update --conservative json nokogiri rexml yard rails-html-sanitizer brakeman || true
-	( make build && git add Gemfile.lock ) || true
+	( make build && git add Gemfile.lock config/credentials.yml.enc ) || true
 	bin/spoom srb bump || true
 	bin/overcommit --install || true
 	@echo

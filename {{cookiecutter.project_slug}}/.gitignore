@@ -57,7 +57,7 @@ sorbet/machine_specific_config
 
 # Ruby-related
 /.yardoc
-/_yardoc/
+/yardoc/
 /doc/
 /pkg/
 /spec/reports/
