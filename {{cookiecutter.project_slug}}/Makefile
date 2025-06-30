@@ -157,7 +157,11 @@ requirements_dev.txt.installed: requirements_dev.txt
 pip_install: requirements_dev.txt.installed ## Install Python dependencies
 
 Gemfile.lock: Gemfile .bundle/config
-	bundle lock
+	if [ ! -f Gemfile.lock ]; then \
+	  bundle install; \
+	else \
+	  bundle lock; \
+	fi
 
 .make/pg_gem_dependencies:
 	for possible_pg_config_path in /opt/homebrew/Cellar/postgresql@16/16.*/bin/pg_config /opt/homebrew/opt/libpq/bin/pg_config ; \
