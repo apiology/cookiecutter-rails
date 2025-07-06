@@ -227,7 +227,7 @@ if __name__ == '__main__':
     parent = os.path.dirname(PROJECT_DIRECTORY)
     # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
     # Make this configurable?
-    run(['gem', 'install', 'rails', '-v', '~> 7.2.1'],
+    run(['gem', 'install', 'rails', '-v', '~> 7.2.2'],
         cwd=parent)
     run(['rbenv', 'version'],
         cwd=parent)
@@ -253,7 +253,7 @@ if __name__ == '__main__':
             if '{{ cookiecutter.api_only }}' == 'Yes':
                 args.append('--api')
 
-            run(['rbenv', 'exec', 'rails', '_7.2.1_', 'new',
+            run(['rbenv', 'exec', 'rails', '_7.2.2_', 'new',
                  *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
