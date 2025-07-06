@@ -50,6 +50,7 @@ end
 
 require 'rspec'
 require 'webmock/rspec'
+require 'stringio'
 
 # Capture logs during spec runs
 module LogCaptureHelper
@@ -67,9 +68,11 @@ module LogCaptureHelper
   end
 end
 
-RSpec.configure do |config|
-  config.include LogCaptureHelper
+class RSpec::Configuration
+  include LogCaptureHelper
+end
 
+RSpec.configure do |config|
   config.around do |example|
     log_messages = capture_logs do
       example.run
