@@ -1,6 +1,10 @@
 ---
 include:
   # process first
+  - "Gemfile"
+  - "*.gemspec"
+  - "Rakefile"
+  - "rakelib/*.rake"
   - "config/annotations*.rb"
   - "**/*.rb"
   - "**/.*.rb"
@@ -24,7 +28,6 @@ exclude:
   - 'config/environments/**.rb'
   - script/.rubocop.yml
   - vendor/**/*
-  - spec/**/*
   - ".bundle/**/*"
   - ".markdownlint_style.rb"
 require:

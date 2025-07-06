@@ -21,12 +21,14 @@
 ENV['REDIS_HOSTNAME'] = 'deactivated-anyway'{% endif %}
 require 'simplecov'
 require 'simplecov-lcov'
+require 'undercover/simplecov_formatter'
 
 SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
   [
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::LcovFormatter,
+    SimpleCov::Formatter::Undercover,
   ]
 )
 # https://github.com/simplecov-ruby/simplecov/blob/ba57b3c07381e7d7d83c255309f371f816bf942d/lib/simplecov/profiles/rails.rb
@@ -35,15 +37,18 @@ SimpleCov.start 'rails' do
   #   extend SimpleCov::Configuration
 
   # this dir used by CircleCI
-  add_filter 'vendor'
-
   add_group 'Scripts', 'script/'
   track_files 'script/*'
-  add_filter 'script/create-script.sh'
+  add_filter '%r{^script/create-script.sh}'
+
+  add_filter(%r{^/vendor/bundle})
+  add_filter(%r{^/spec})
+  track_files 'lib/**/*.rb'
 
   enable_coverage(:branch) # Report branch coverage to trigger branch-level undercover warnings
 end
 
+require 'rspec'
 require 'webmock/rspec'
 
 # Capture logs during spec runs
