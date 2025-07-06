@@ -5,7 +5,7 @@
  development:
    <<: *default
 -  database: {{cookiecutter.project_slug.replace('-', '_')}}_development
-+  # plate_spinner_rails_development
++  # {{cookiecutter.project_slug.replace('-', '_')}}_development
 +  database: <%= ENV['{{cookiecutter.project_slug.replace('-', '_').upper()}}_DEV_DATABASE_DATABASE'] %>
  
    # The specified database role being used to connect to PostgreSQL.
