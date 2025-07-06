@@ -139,7 +139,7 @@ overcommit_branch: ## run precommit quality checks only on changed files
 quality: lint overcommit ## run precommit quality checks
 
 bake: ## generate project using defaults
-	cookiecutter $(BAKE_OPTIONS) . --overwrite-if-exists
+	cookiecutter $(BAKE_OPTIONS) . --overwrite-if-exists --keep-project-on-failure
 
 watch: bake ## generate project using defaults and watch for changes
 	watchmedo shell-command -p '*.*' -c 'make bake -e BAKE_OPTIONS=$(BAKE_OPTIONS)' -W -R -D \cookiecutter-rails/

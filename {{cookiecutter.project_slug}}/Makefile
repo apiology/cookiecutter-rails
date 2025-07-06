@@ -204,7 +204,7 @@ gem_dependencies: .bundle/config .make/psych_gem_dependencies .make/pg_gem_depen
 
 # Ensure any Gemfile.lock changes, even pulled from git, ensure a
 # bundle is installed.
-Gemfile.lock.installed: Gemfile vendor/.keep
+Gemfile.lock.installed: Gemfile.lock vendor/.keep
 	touch Gemfile.lock.installed
 
 vendor/.keep: Gemfile.lock .ruby-version

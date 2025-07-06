@@ -47,6 +47,7 @@ PreCommit:
   PythonFlake8:
     enabled: true
     on_warn: fail
+    problem_on_unmodified_line: warn
   ShellCheck:
     enabled: true
     on_warn: fail
@@ -57,6 +58,7 @@ PreCommit:
     enabled: true
     flags: ['-c', '.yamllint.yml', '--format=parsable', '--strict']
     on_warn: fail
+    problem_on_unmodified_line: warn
   CircleCi:
     required_executable: 'circleci'
     flags: ['config', 'validate']
