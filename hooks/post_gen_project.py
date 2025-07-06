@@ -253,7 +253,7 @@ if __name__ == '__main__':
             if '{{ cookiecutter.api_only }}' == 'Yes':
                 args.append('--api')
 
-            run(['rbenv', 'exec', 'rails', '_7.2.2_', 'new',
+            run(['rbenv', 'exec', 'rails', '_7.2.2.1_', 'new',
                  *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
