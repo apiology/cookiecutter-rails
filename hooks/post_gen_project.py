@@ -83,14 +83,14 @@ def verify_backup_file(tilde_filename):
     base_filename = tilde_filename[:-1]
     processed_filename = base_filename
     rails_written_filename = processed_filename
-    orig_file = f"{base_filename}.orig"
+    orig_file = f'{base_filename}.orig'
     # if orig_file exists
     if os.path.exists(orig_file):
         # before we applied any patches - we want to show a whole
         # patch, not a partial one on top of our existing
         rails_written_filename = orig_file
     goal_filename = tilde_filename
-    print("Verifying backup file", tilde_filename)
+    print('Verifying backup file', tilde_filename)
 
     # if two files are identical, remove new one
     with open(processed_filename, 'rb') as f:
@@ -112,16 +112,16 @@ def verify_backup_file(tilde_filename):
     errmsg += f'New file: {goal_filename}\n'
     with open(goal_filename) as f:
         errmsg += f.read()
-    errmsg += "Unexpected differences:"
+    errmsg += 'Unexpected differences:'
     errmsg += subprocess.getoutput(f'diff -u {processed_filename} {goal_filename}')
-    errmsg += f"\nComplete diff between files - save to {base_filename}.patch\n"
+    errmsg += f'\nComplete diff between files - save to {base_filename}.patch\n'
     # add diff to errmsg
     errmsg += subprocess.getoutput(f'diff -u {rails_written_filename} {goal_filename}')
     raise RuntimeError(errmsg)
 
 
 def verify_directory(directory):
-    for root, dirs, files in os.walk(directory):
+    for root, _dirs, files in os.walk(directory):
         if big_and_irrelevant_directory(root):
             continue
         for filename in files:
@@ -131,7 +131,7 @@ def verify_directory(directory):
 
 
 def remove_orig_files_in_directory(directory):
-    for root, dirs, files in os.walk(directory):
+    for root, _dirs, files in os.walk(directory):
         if big_and_irrelevant_directory(root):
             continue
         for filename in files:
@@ -151,37 +151,37 @@ def diagnose_patch_error(patch_filename, target_file):
         with open(patch_filename) as f:
             full_file_contents = f.read()
         print(f'.patch file:\n{full_file_contents}', flush=True, file=sys.stdout)
-        orig_file = f"{target_file}.orig"
+        orig_file = f'{target_file}.orig'
         # if orig_file exists
         if os.path.exists(orig_file):
             with open(orig_file) as f:
                 orig_file_contents = f.read()
             print(f'.orig file:\n{orig_file_contents}', flush=True, file=sys.stdout)
-        rej_file = f"{target_file}.rej"
+        rej_file = f'{target_file}.rej'
         if os.path.exists(rej_file):
             with open(rej_file) as f:
                 rej_file_contents = f.read()
                 print(f'Rejected hunk:\n{rej_file_contents}', flush=True, file=sys.stdout)
-        tilde_file = f"{target_file}~"
+        tilde_file = f'{target_file}~'
         if os.path.exists(tilde_file):
             with open(tilde_file) as f:
                 tilde_file_contents = f.read()
             print(f'Intended file:\n{tilde_file_contents}', flush=True, file=sys.stdout)
             # if orig path does not exist
             if not os.path.exists(orig_file):
-                print("No .orig file found", flush=True, file=sys.stdout)
+                print('No .orig file found', flush=True, file=sys.stdout)
                 # patch process errored out without processing any hunks
                 orig_file = target_file
             else:
-                print("Found .orig file!")
+                print('Found .orig file!')
             # show diff
-            print(f"Save this as {target_file}.patch", flush=True, file=sys.stdout)
+            print(f'Save this as {target_file}.patch', flush=True, file=sys.stdout)
             print(subprocess.getoutput(f'diff -u {orig_file} {tilde_file}'),
                   flush=True, file=sys.stdout)
 
 
 def patch_directory(directory):
-    for root, dirs, files in os.walk(directory):
+    for root, _dirs, files in os.walk(directory):
         if big_and_irrelevant_directory(root):
             continue
 
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     parent = os.path.dirname(PROJECT_DIRECTORY)
     # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
     # Make this configurable?
-    run(['gem', 'install', 'rails', '-v', '~> 7.2.1'],
+    run(['gem', 'install', 'rails', '-v', '~> 7.2.2'],
         cwd=parent)
     run(['rbenv', 'version'],
         cwd=parent)
@@ -250,10 +250,10 @@ if __name__ == '__main__':
                 '--skip-action-cable',
                 '--skip-ci',
             ]
-            if "{{ cookiecutter.api_only }}" == 'Yes':
+            if '{{ cookiecutter.api_only }}' == 'Yes':
                 args.append('--api')
 
-            run(['rbenv', 'exec', 'rails', 'new',
+            run(['rbenv', 'exec', 'rails', '_7.2.2.1_', 'new',
                  *args,
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
@@ -262,7 +262,7 @@ if __name__ == '__main__':
                 cwd=rails_new_project_dir)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
                 cwd=rails_new_project_dir)
-            if "{{ cookiecutter.api_only }}" == 'No':
+            if '{{ cookiecutter.api_only }}' == 'No':
                 run(['bin/rails', 'importmap:install'],
                     cwd=rails_new_project_dir)
             run(['bin/rails', 'g', 'annotate:install', '--force'],

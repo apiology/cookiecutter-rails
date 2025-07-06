@@ -44,8 +44,8 @@ commands:
       - restore_cache:
           name: Restore rbenv cache
           keys:
-            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}- # yamllint disable-line rule:line-length
-            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-
+            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile"  }}{% endraw %}-{% raw %} {{ checksum ".circleci/config.yml" }}{% endraw %}- # yamllint disable-line rule:line-length
+            - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "Makefile"  }}{% endraw %}- # yamllint disable-line rule:line-length
             - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-
             - rbenv-v5-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-
             - rbenv-v5-
@@ -260,7 +260,7 @@ jobs:
             - update_dependencies:
                 gems: checkoff{% endif %}
       - run:
-          name: Verify deltas
+          label: Verify deltas
           command: |
             if [ -n "$(git status --porcelain)" ]
             then
@@ -294,6 +294,14 @@ jobs:
             # https://thoughtbot.com/blog/circleci-2-rails
             # Wait for DB
             dockerize -wait tcp://localhost:5432 -timeout 1m
+
+            # Set timezone as same on dev box for test consistency
+
+            # https://stackoverflow.com/questions/44331836/apt-get-install-tzdata-noninteractive
+            sudo ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+            export TZ=America/New_York
+            date
 
             make citest cicoverage
     # This seemed to shave 5ish% of the build time off when added
