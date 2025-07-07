@@ -32,6 +32,10 @@
 #     # @return [Object,nil]
 #     def self.[]=(key,value); end
 #   end
+#   class StringIO
+#     # @return [String]
+#     def string; end
+#   end
 #   module Bundler
 #     class << self
 #       # @param groups [Array<Symbol>]

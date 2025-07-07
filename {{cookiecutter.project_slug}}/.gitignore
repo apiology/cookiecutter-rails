@@ -81,6 +81,8 @@ sorbet/machine_specific_config
 !/storage/.keep
 .byebug_history
 
+/yardoc
+
 # Ignore bundler config.
 /.bundle/config
 

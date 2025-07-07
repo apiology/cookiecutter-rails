@@ -19,6 +19,7 @@ group :development, :test do
   #   path: '../sord'
   # ensure version with branch coverage
   gem 'simplecov', ['>=0.18.0']
+  gem 'simplecov_json_formatter'
   gem 'simplecov-lcov'
   # need --exclude-files
   gem 'undercover', ['>=0.6.3']
@@ -45,7 +46,10 @@ group :development do
   gem 'solargraph-rails',
       github: 'iftheshoefritz/solargraph-rails',
       branch: 'main'
-  gem 'yard'
+  # need https://github.com/lsegal/yard/pull/1604
+  gem 'yard',
+      github: 'lsegal/yard',
+      branch: 'main'
   gem 'yard-sorbet'
   gem 'sorbet', ['>=0.5.12219']
   gem 'tapioca', ['>= 0.17.6'], require: false
@@ -54,11 +58,13 @@ end
 {% if cookiecutter.use_checkoff == 'Yes' %}# ruby-asana gem is pending key bugfixes for checkoff as of
 # 2021-07-29:
 #
+
 # See
 #  https://github.com/Asana/ruby-asana/issues/109
 #  https://github.com/Asana/ruby-asana/issues/110
 #
 gem 'asana',
+    #   path: '/Users/broz/src/ruby-asana'
     git: 'https://github.com/apiology/ruby-asana',
     branch: 'checkoff_fixes'
 #   path: '/Users/broz/src/ruby-asana'
@@ -70,6 +76,7 @@ gem 'asana',
 gem 'cache_method',
     git: 'https://github.com/apiology/cache_method',
     branch: 'ruby_3_support'
+
 gem 'checkoff' # , path: '/Users/broz/src/checkoff'
 {% endif %}gem 'rake'
 {% if cookiecutter.use_checkoff == 'Yes' %}gem 'redis'{% endif %}
