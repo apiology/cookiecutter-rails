@@ -39,7 +39,8 @@ m = Module.new do
 
   def gemfile
     gemfile = ENV["BUNDLE_GEMFILE"]
-    return gemfile if gemfile && !gemfile.empty?
+    # https://stackoverflow.com/questions/67910193/heroku-bundler-undefined-method-present-fails-to-install-gems-via-bundler
+    return gemfile if gemfile && !gemfile.empty? # rubocop:disable Rails/Present
 
     File.expand_path("../Gemfile", __dir__)
   end
