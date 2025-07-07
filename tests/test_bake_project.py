@@ -1,3 +1,5 @@
+"""Run the cookiecutter template and verify it succeeds."""
+
 from contextlib import contextmanager
 import datetime
 import os
@@ -11,7 +13,7 @@ import jinja2
 
 @contextmanager
 def inside_dir(dirpath):
-    """Execute code from inside the given directory
+    """Execute code from inside the given directory.
 
     :param dirpath: String, path of the directory the command is being run.
     """
@@ -25,9 +27,7 @@ def inside_dir(dirpath):
 
 @contextmanager
 def suppressed_github_and_circleci_creation():
-    """A context manager which sets an env variable to suppress creating
-    GitHub repos and pushing to CircleCI during the hooks.
-    """
+    """Avoid external mutations while running tests."""
     os.environ['SKIP_EXTERNAL'] = '1'
     try:
         yield
@@ -36,16 +36,16 @@ def suppressed_github_and_circleci_creation():
 
 
 def errmsg(exception):
+    """Create error message from exception."""
     if isinstance(exception, jinja2.exceptions.TemplateSyntaxError):
         return f'Found error at {exception.filename}:{exception.lineno}'
-    else:
-        return str(exception)
+    return str(exception)
 
 
 @contextmanager
 def bake_in_temp_dir(cookies, *args, **kwargs):
-    """
-    Delete the temporal directory that is created when executing the tests
+    """Delete the temporal directory that is created when executing the tests.
+
     :param cookies: pytest_cookies.Cookies,
         cookie to be baked and its temporal files will be removed
     """
@@ -62,8 +62,8 @@ def bake_in_temp_dir(cookies, *args, **kwargs):
 
 
 def run_inside_dir(command, dirpath):
-    """
-    Run a command from inside a given directory, returning the exit status
+    """Run a command from inside a given directory, returning the exit status.
+
     :param command: Command that will be executed
     :param dirpath: String, path of the directory the command is being run.
     """
@@ -72,7 +72,7 @@ def run_inside_dir(command, dirpath):
 
 
 def check_output_inside_dir(command, dirpath):
-    """Run a command from inside a given directory, returning the command output"""
+    """Run a command from inside a given directory, returning the command output."""
     with inside_dir(dirpath):
         return subprocess.check_output(shlex.split(command))
 
@@ -86,6 +86,7 @@ def project_info(result):
 
 
 def test_bake_and_run_build(cookies):
+    """Run the template and verify it succeeds."""
     with bake_in_temp_dir(cookies,
                           extra_context={
                               'full_name': 'name "quote" O\'connor',
@@ -118,10 +119,11 @@ def test_bake_and_run_build(cookies):
         assert 'cookiecutter.' not in circle_ci_config.open().read()
         now = datetime.datetime.now()
         assert str(now.year) in license_file_path.open().read()
-        print("path:", str(result.project_path))
+        print('path:', str(result.project_path))
 
 
 def test_bake_and_run_build_non_default_options(cookies):
+    """Run the template with non-default options and verify it succeeds."""
     with bake_in_temp_dir(cookies,
                           extra_context={
                               'api_only': 'Yes',

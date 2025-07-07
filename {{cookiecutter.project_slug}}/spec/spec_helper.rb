@@ -54,6 +54,7 @@ require 'stringio'
 
 # Capture logs during spec runs
 module LogCaptureHelper
+  # @sg-ignore
   # @return [String]
   def capture_logs
     original_logger = Rails.logger
@@ -74,6 +75,7 @@ end
 
 RSpec.configure do |config|
   config.around do |example|
+    # @sg-ignore
     log_messages = capture_logs do
       example.run
     end
