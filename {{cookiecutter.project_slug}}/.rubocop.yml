@@ -246,10 +246,12 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - 'config.ru'
     - 'lib/tasks/auto_annotate_models.rake'
+    - 'sorbet/**/*'
 
-require:
-  - rubocop-rspec
-  - rubocop-rails
-  - rubocop-rspec_rails
+plugins:
   - rubocop-performance
+  - rubocop-rails
   - rubocop-rake
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-yard

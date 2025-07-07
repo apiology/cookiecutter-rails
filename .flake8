@@ -11,3 +11,4 @@ per-file-ignores =
     hooks/post_gen_project.py:D103,D100
 application-import-names = tests
 import-order-style = google
+ignore = I001

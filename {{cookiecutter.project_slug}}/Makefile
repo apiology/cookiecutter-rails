@@ -28,19 +28,25 @@ start: ## run code continously and watch files for changes
 
 SORD_GEN_OPTIONS = --replace-errors-with-untyped --exclude-messages OMIT --no-regenerate #  --hide-private
 
-rbi/{{cookiecutter.project_slug}}.rbi: tapioca.installed yardoc.installed sorbet/config ## Generate Sorbet types from Yard docs
-	bin/parlour run --trace
-	bin/sord gen $(SORD_GEN_OPTIONS) rbi/{{cookiecutter.project_slug}}-sord.rbi
+rbi/{{cookiecutter.project_slug}}.rbi: tapioca.installed yardoc.installed sorbet/config .gem_rbs_collection/.keepme ## Generate Sorbet types from Yard docs
+	bin/parlour run --trace # creates RBI file from from RBI inline annotations in code
+	bin/sord gen $(SORD_GEN_OPTIONS) rbi/{{cookiecutter.project_slug}}-sord.rbi # YARD to RBI
 	cat rbi/{{cookiecutter.project_slug}}-parlour.rbi rbi/{{cookiecutter.project_slug}}-sord.rbi > rbi/{{cookiecutter.project_slug}}.rbi
 	rm -f rbi/{{cookiecutter.project_slug}}-sord.rbi rbi/{{cookiecutter.project_slug}}-parlour.rbi
-	sed -i.bak -e 's/^# typed: strong/# typed: true/' rbi/{{cookiecutter.project_slug}}.rbi
+#	sed -i.bak -e 's/^# typed: strong/# typed: ignore/' rbi/{{cookiecutter.project_slug}}.rbi
 	rm -f rbi/{{cookiecutter.project_slug}}.rbi.bak
+	touch rbi/{{cookiecutter.project_slug}}.rbi
 
-YARD_PLUGIN_OPTS = --plugin yard-sorbet
+sig/{{cookiecutter.project_slug}}.rbs: yardoc.installed gem_rbs_collection/.keepme ## Generate RBS file
+	rm -f rbi/{{cookiecutter.project_slug}}.rbs
+	bin/sord gen $(SORD_GEN_OPTIONS) sig/{{cookiecutter.project_slug}}.rbs # YARD to RBS
 
-YARD_OPTS = $(YARD_PLUGIN_OPTS) -c .yardoc --output-dir yardoc --backtrace
+YARD_PLUGIN_OPTS = --plugin yard-sorbet --plugin yard-solargraph
+
+YARD_OPTS = $(YARD_PLUGIN_OPTS) -c .yardoc --output-dir yardoc --backtrace --exclude '^config/' '{lib,app,spec,feature}/**/*.rb' 'ext/**/*.{c,rb}'
 
 types.installed: tapioca.installed Gemfile.lock Gemfile.lock.installed rbi/{{cookiecutter.project_slug}}.rbi sorbet/tapioca/require.rb sorbet/config ## Ensure typechecking dependencies are in place
+	bin/solargraph gems
 	bin/yard gems $(YARD_PLUGIN_OPTS) 2>&1 || bin/yard gems --safe $(YARD_PLUGIN_OPTS) 2>&1 || bin/yard gems $(YARD_PLUGIN_OPTS) 2>&1
 	# bin/solargraph scan 2>&1
 	bin/spoom srb bump || true
@@ -59,7 +65,22 @@ sorbet/machine_specific_config:
 sorbet/rbi/todo.rbi: sorbet/tapioca/require.rb rbi/{{cookiecutter.project_slug}}.rbi tapioca.installed
 	bin/tapioca todo
 
-build-typecheck: Gemfile.lock.installed types.installed sorbet/machine_specific_config sorbet/rbi/todo.rbi ## Fetch information that type checking depends on
+build-typecheck: Gemfile.lock.installed rbs_collection.lock.yaml types.installed sorbet/machine_specific_config sorbet/rbi/todo.rbi ## Fetch information that type checking depends on
+
+rbs_collection.lock.yaml: Gemfile.lock rbs_collection.yaml
+	bin/rbs collection update
+	touch rbs_collection.lock.yaml
+
+rbs_collection.yaml:
+	bin/rbs collection init
+
+.gem_rbs_collection/.keepme: rbs_collection.lock.yaml
+	# Ensure that the gem rbs collection is installed
+	bin/rbs collection install
+	touch .gem_rbs_collection/.keepme
+
+ci-build-typecheck: build-typecheck  ## Ensure cache is filled for CI to save regardless of actions run
+	bundle exec solargraph gems
 
 # Only create this once, so no dependencies
 sorbet/tapioca/require.rb:
@@ -94,12 +115,13 @@ docs: ## Generate YARD documentation
 	@rake doc
 
 clean-typecheck: ## Refresh the easily-regenerated information that type checking depends on
-	bin/solargraph clear || true
-	rm -fr .yardoc/ rbi/{{cookiecutter.project_slug}}.rbi types.installed yardoc.installed
+	rm -fr .yardoc/ rbi/{{cookiecutter.project_slug}}.rbi types.installed yardoc.installed sig/{{cookiecutter.project_slug}}.rbs || true
 {% if cookiecutter.use_checkoff %}	rm -fr ../checkoff/.yardoc || true
 {% endif %}	echo all clear
 
 realclean-typecheck: clean-typecheck ## Remove all type checking artifacts
+	bin/solargraph clear || true
+	rm -fr rbi/*.rbi
 	rm -fr ~/.cache/solargraph
 	rm -f tapioca.installed
 
@@ -113,12 +135,23 @@ SORBET_TC_OPTIONS = --suppress-error-code 4010 # --suppress-error-code 4002
 srb: build-typecheck ## Run Sorbet typechecker
 	bin/srb tc $(SORBET_TC_OPTIONS)
 
-solargraph: build-typecheck ## Run Solargraph typechecker
+solargraph: solargraph-strong ## Run Solargraph typechecker
+
+solargraph-normal: build-typecheck ## Run Solargraph typechecker
+	bin/solargraph typecheck --level normal
+
+solargraph-typed: build-typecheck ## Run Solargraph typechecker
+	bin/solargraph typecheck --level typed
+
+solargraph-strict: build-typecheck ## Run Solargraph typechecker
+	bin/solargraph typecheck --level strict
+
+solargraph-strong: build-typecheck ## Run Solargraph typechecker
 	bin/solargraph typecheck --level strong
 
 typecheck: build-typecheck srb solargraph ## validate types in code and configuration
 
-citypecheck: build-typecheck srb solargraph ## Run type check from CircleCI
+citypecheck: ci-build-typecheck srb solargraph ## Run type check from CircleCI
 
 typecoverage: typecheck ## Run type checking and then ratchet coverage in metrics/
 
@@ -188,6 +221,7 @@ gem_dependencies: .bundle/config .make/psych_gem_dependencies .make/pg_gem_depen
 # Ensure any Gemfile.lock changes, even pulled from git, ensure a
 # bundle is installed.
 Gemfile.lock.installed: Gemfile vendor/.keep
+	bundle install
 	touch Gemfile.lock.installed
 
 vendor/.keep: Gemfile.lock .ruby-version
@@ -213,7 +247,7 @@ overcommit: ## run precommit quality checks
 	bin/overcommit --run
 
 overcommit_branch: ## run precommit quality checks only on changed files
-	@bin/overcommit_branch
+	bin/overcommit --run --diff origin/main
 
 quality: overcommit ## run precommit quality checks
 

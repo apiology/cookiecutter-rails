@@ -62,7 +62,7 @@ ratchet-typecoverage: ## Run type checking, ratchet coverage, and then complain 
 	@git status --porcelain metrics/mypy_high_water_mark
 	@test -z "$$(git status --porcelain metrics/mypy_high_water_mark)"
 
-citypecoverage: ratchet-typecoverage ## Run type checking, ratchet coverage, and then complain if ratchet needs to be committed
+citypecoverage: citypecheck ratchet-typecoverage ## Run type checking, ratchet coverage, and then complain if ratchet needs to be committed
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -93,7 +93,11 @@ requirements_dev.txt.installed: requirements_dev.txt
 pip_install: requirements_dev.txt.installed ## Install Python dependencies
 
 Gemfile.lock: Gemfile .bundle/config
-	bundle lock
+	if [ ! -f Gemfile.lock ]; then \
+	  bundle install; \
+	else \
+	  bundle lock; \
+	fi
 
 .bundle/config:
 	touch .bundle/config
@@ -124,18 +128,18 @@ test: ## run tests quickly
 	pytest --maxfail=1 tests/test_bake_project.py --capture=no -v
 
 citest:  ## Run unit tests from CircleCI
-	pytest --maxfail=1 tests/test_bake_project.py -v
+	pytest --maxfail=1 tests/test_bake_project.py --capture=no -v
 
 overcommit: ## run precommit quality checks
 	bin/overcommit --run
 
 overcommit_branch: ## run precommit quality checks only on changed files
-	@bin/overcommit_branch
+	bin/overcommit --run --diff origin/main
 
 quality: lint overcommit ## run precommit quality checks
 
 bake: ## generate project using defaults
-	cookiecutter $(BAKE_OPTIONS) . --overwrite-if-exists
+	cookiecutter $(BAKE_OPTIONS) . --overwrite-if-exists --keep-project-on-failure
 
 watch: bake ## generate project using defaults and watch for changes
 	watchmedo shell-command -p '*.*' -c 'make bake -e BAKE_OPTIONS=$(BAKE_OPTIONS)' -W -R -D \cookiecutter-rails/

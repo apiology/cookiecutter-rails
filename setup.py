@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Setup cookiecutter-rails package."""
 
 from distutils.core import setup
 
