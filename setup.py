@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Setup cookiecutter-rails package."""
+"""Package metadata for the cookiecutter-rails cookiecutter template."""
 
 from distutils.core import setup
 
