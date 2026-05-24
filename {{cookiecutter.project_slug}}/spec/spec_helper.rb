@@ -74,8 +74,8 @@ class RSpec::Configuration
 end
 
 RSpec.configure do |config|
+  # @sg-ignore
   config.around do |example|
-    # @sg-ignore
     log_messages = capture_logs do
       example.run
     end
