@@ -6,6 +6,9 @@ rules:
   comments: disable
   line-length:
     max: 120
+    ignore: |
+      # long shell literal strings
+      **/.circleci/config.yml
   # Rails ships with some things
   indentation:
     ignore:

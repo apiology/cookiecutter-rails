@@ -1,4 +1,4 @@
-"""Run the cookiecutter template and verify it succeeds."""
+"""Tests for cookiecutter bake and build quality."""
 
 from contextlib import contextmanager
 import datetime
@@ -15,7 +15,7 @@ import jinja2
 def inside_dir(dirpath):
     """Execute code from inside the given directory.
 
-    :param dirpath: String, path of the directory the command is being run.
+    :param dirpath: Path of the directory the command is being run in.
     """
     old_path = os.getcwd()
     try:
@@ -27,7 +27,10 @@ def inside_dir(dirpath):
 
 @contextmanager
 def suppressed_github_and_circleci_creation():
-    """Avoid external mutations while running tests."""
+    """Suppress GitHub and CircleCI creation during hooks.
+
+    Set SKIP_EXTERNAL so hooks do not create repos or push to CircleCI.
+    """
     os.environ['SKIP_EXTERNAL'] = '1'
     try:
         yield
@@ -36,7 +39,7 @@ def suppressed_github_and_circleci_creation():
 
 
 def errmsg(exception):
-    """Create error message from exception."""
+    """Format a cookiecutter or Jinja exception for assertion messages."""
     if isinstance(exception, jinja2.exceptions.TemplateSyntaxError):
         return f'Found error at {exception.filename}:{exception.lineno}'
     return str(exception)
@@ -44,10 +47,11 @@ def errmsg(exception):
 
 @contextmanager
 def bake_in_temp_dir(cookies, *args, **kwargs):
-    """Delete the temporal directory that is created when executing the tests.
+    """Bake a cookiecutter in a temporary directory.
 
-    :param cookies: pytest_cookies.Cookies,
-        cookie to be baked and its temporal files will be removed
+    :param cookies: pytest_cookies.Cookies instance.
+    :param args: Positional arguments passed to cookies.bake.
+    :param kwargs: Keyword arguments passed to cookies.bake.
     """
     with suppressed_github_and_circleci_creation():
         result = cookies.bake(*args, **kwargs)
@@ -58,27 +62,32 @@ def bake_in_temp_dir(cookies, *args, **kwargs):
     try:
         yield result
     finally:
-        rmtree(str(result.project_path))
+        if '--keep-baked-projects' not in sys.argv:
+            rmtree(str(result.project_path))
 
 
 def run_inside_dir(command, dirpath):
-    """Run a command from inside a given directory, returning the exit status.
+    """Run a command inside a directory and return the exit status.
 
-    :param command: Command that will be executed
-    :param dirpath: String, path of the directory the command is being run.
+    :param command: Command to execute.
+    :param dirpath: Working directory for the command.
     """
     with inside_dir(dirpath):
         return subprocess.check_call(shlex.split(command))
 
 
 def check_output_inside_dir(command, dirpath):
-    """Run a command from inside a given directory, returning the command output."""
+    """Run a command inside a directory and return command output.
+
+    :param command: Command to execute.
+    :param dirpath: Working directory for the command.
+    """
     with inside_dir(dirpath):
         return subprocess.check_output(shlex.split(command))
 
 
 def project_info(result):
-    """Get toplevel dir, project_slug, and project dir from baked cookies."""
+    """Return toplevel dir, project_slug, and project dir from baked cookies."""
     project_path = str(result.project_path)
     project_slug = os.path.split(project_path)[-1]
     project_dir = os.path.join(project_path, project_slug)
@@ -86,7 +95,7 @@ def project_info(result):
 
 
 def test_bake_and_run_build(cookies):
-    """Run the template and verify it succeeds."""
+    """Bake the template and run make test, typecheck, and quality."""
     with bake_in_temp_dir(cookies,
                           extra_context={
                               'full_name': 'name "quote" O\'connor',
@@ -119,7 +128,7 @@ def test_bake_and_run_build(cookies):
         assert 'cookiecutter.' not in circle_ci_config.open().read()
         now = datetime.datetime.now()
         assert str(now.year) in license_file_path.open().read()
-        print('path:', str(result.project_path))
+        print('test_bake_and_run_build path', str(result.project_path))
 
 
 def test_bake_and_run_build_non_default_options(cookies):
@@ -136,4 +145,5 @@ def test_bake_and_run_build_non_default_options(cookies):
         assert run_inside_dir('make test', str(result.project_path)) == 0
         assert run_inside_dir('make typecheck', str(result.project_path)) == 0
         assert run_inside_dir('make quality', str(result.project_path)) == 0
-        print('path:', str(result.project_path))
+        print('test_bake_and_run_build_non_default_options path',
+              str(result.project_path))
