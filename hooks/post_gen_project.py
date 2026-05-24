@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
-RAILS_VERSION = '7.2.2.1'
+RAILS_VERSION = '7.2.3.1'
 
 port_prefix_str = '{{cookiecutter.db_port_prefix}}'
 port_prefix = int(port_prefix_str) * 10
