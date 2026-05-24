@@ -9,17 +9,14 @@
 +ruby '~> 3.3.6'
 +
  # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
- gem "rails", "7.2.2.1"
+-gem "rails", "~> 7.2.2", ">= 7.2.2.1"
++gem "rails", "7.2.2.1"
 +gem "thor", "< 1.5.0"
  # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-@@ -45,10 +45,7 @@
- 
+@@ -36,6 +36,3 @@
    # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
    gem "brakeman", require: false
 -
 -  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
 -  gem "rubocop-rails-omakase", require: false
  end
- 
- group :development do
- 
