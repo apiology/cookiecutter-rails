@@ -4,4 +4,5 @@
 --ignore=vendor/
 --ignore=*.sh
 --did-you-mean=false
+--suppress-payload-superclass-redefinition-for=RDoc::Markup::Heading
 @sorbet/machine_specific_config
