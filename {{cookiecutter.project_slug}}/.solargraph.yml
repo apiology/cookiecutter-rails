@@ -18,6 +18,8 @@ exclude:
   - 'bin/bundle'
   - 'bin/setup'
   - 'bin/brakeman'
+  - 'bin/rubocop'
+  - 'config/boot.rb'
   - "db/migrate/**/*"
   - db/schema.rb
   - 'config/puma.rb'
