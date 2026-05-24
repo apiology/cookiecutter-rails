@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -77,6 +78,25 @@ def create_docker_compose_db_onepass_entry(rails_env, port):
                       password=random_password(), port=port,
                       server='localhost',
                       database=database)
+
+
+def copy_tree_with_backup(src_dir, dst_dir):
+    """Recursively copy src_dir into dst_dir, backing up overwritten files as filename~."""
+    for root, dirs, files in os.walk(src_dir):
+        rel_path = os.path.relpath(root, src_dir)
+        dest_dir = dst_dir if rel_path == '.' else os.path.join(dst_dir, rel_path)
+        os.makedirs(dest_dir, exist_ok=True)
+        for dirname in dirs:
+            os.makedirs(os.path.join(dest_dir, dirname), exist_ok=True)
+        for filename in files:
+            src_file = os.path.join(root, filename)
+            dest_file = os.path.join(dest_dir, filename)
+            if os.path.lexists(dest_file):
+                backup_file = f'{dest_file}~'
+                if os.path.exists(backup_file):
+                    os.remove(backup_file)
+                shutil.copy2(dest_file, backup_file)
+            shutil.copy2(src_file, dest_file)
 
 
 def verify_backup_file(tilde_filename):
@@ -272,9 +292,9 @@ if __name__ == '__main__':
                 cwd=rails_new_project_dir)
             run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
-            run(['gcp', '-R', '--backup',
-                 os.path.join(tempdir, '{{cookiecutter.project_slug}}', '.'),
-                 PROJECT_DIRECTORY])
+            copy_tree_with_backup(
+                os.path.join(tempdir, '{{cookiecutter.project_slug}}'),
+                PROJECT_DIRECTORY)
 
         # Ignore version from Rails
         revert = [
