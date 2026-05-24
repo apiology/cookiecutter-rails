@@ -40,9 +40,7 @@ group :development do
   gem 'rubocop-rspec', ['>=3.4.0']
   gem 'rubocop-rspec_rails'
   gem 'rubocop-yard'
-  gem 'solargraph', # ['>=0.56']
-      github: 'apiology/solargraph',
-      branch: 'allow_newer_rbs'
+  gem 'solargraph', ['>= 0.59.2']
   gem 'solargraph-rails',
       github: 'iftheshoefritz/solargraph-rails',
       branch: 'main'

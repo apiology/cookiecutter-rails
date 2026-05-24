@@ -1,6 +1,6 @@
 --- Gemfile	2024-11-28 16:14:53
 +++ Gemfile~	2024-11-28 16:14:23
-@@ -1,5 +1,11 @@
+@@ -1,5 +1,10 @@
 +# frozen_string_literal: true
 +
  source "https://rubygems.org"
@@ -11,7 +11,6 @@
  # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 -gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 +gem "rails", "7.2.2.1"
-+gem "thor", "< 1.4.0"
  # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 @@ -36,6 +36,3 @@
    # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
