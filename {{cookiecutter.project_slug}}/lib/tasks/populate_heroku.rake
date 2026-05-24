@@ -9,7 +9,6 @@ def pull_vars
   end
 end
 
-# @sg-ignore
 # @return [Hash{String => Object}]
 def pull_vars_and_values
   heroku_only = {
@@ -21,6 +20,7 @@ def pull_vars_and_values
     'RAILS_ENV' => 'production',
   }
   pull_vars.each_with_object(heroku_only.dup) do |var, h|
+    # @sg-ignore
     h[var] = ENV.fetch(var)
   end
 end
