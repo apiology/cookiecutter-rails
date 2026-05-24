@@ -121,7 +121,7 @@ def verify_backup_file(tilde_filename):
         run(['rm', goal_filename])
         return
 
-    errmsg = f'Found a file ending in ~: {filename}'
+    errmsg = f'Found a file ending in ~: {base_filename}'
     # add the contents of old file and new file
     # to the error message
     errmsg += '\n'
@@ -304,6 +304,8 @@ if __name__ == '__main__':
             'config/master.key',
             'config/credentials.yml.enc',
             'tmp/local_secret.txt',
+            'spec/spec_helper.rb',
+            'spec/rails_helper.rb',
         ]
         # revert from the backup file, as these files don't have
         # interesting upstream information for us
