@@ -27,6 +27,7 @@ exclude:
   # Bundler binstubs and Rails boot use ENV[], which Solargraph 0.59+
   # does not yet resolve against RBS::Unnamed::ENVClass.
   - 'config/boot.rb'
+  - 'config/initializers/checkoff.rb'
   - 'spec/**/*'
   - "db/migrate/**/*"
   - db/schema.rb

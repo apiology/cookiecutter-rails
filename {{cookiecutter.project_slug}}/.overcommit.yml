@@ -108,6 +108,7 @@ PreCommit:
       # Bundler binstubs and Rails boot use ENV[], which Solargraph 0.59+
       # does not yet resolve against RBS::Unnamed::ENVClass.
       - 'config/boot.rb'
+      - 'config/initializers/checkoff.rb'
       - "db/migrate/**/*"
       - db/schema.rb
       - 'config/puma.rb'
