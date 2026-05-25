@@ -127,7 +127,7 @@ clean: clean-build clean-pyc clean-test clean-typecoverage clean-typecheck clean
 test: ## run tests quickly
 	pytest --maxfail=1 tests/test_bake_project.py --capture=no --keep-baked-projects -v
 
-citest:  ## Run unit tests from CircleCI
+citest: ## Run unit tests from CircleCI
 	pytest --keep-baked-projects  --maxfail=1 tests/test_bake_project.py --capture=no -v
 
 overcommit: ## run precommit quality checks
