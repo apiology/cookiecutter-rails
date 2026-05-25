@@ -115,3 +115,17 @@
 #     # @return [void]
 #     def each(&block); end
 #   end
+#   module Lograge
+#     class Configuration
+#       # @return [Boolean]
+#       attr_accessor :enabled
+#       # @return [String]
+#       attr_accessor :base_controller_class
+#       # @return [Proc]
+#       attr_accessor :ignore_custom
+#     end
+#   end
+#   class Rails::Application::Configuration
+#     # @return [Lograge::Configuration]
+#     def lograge; end
+#   end
