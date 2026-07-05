@@ -260,20 +260,22 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
             rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
-            run(['bundle', 'install'], cwd=rails_new_project_dir)
-            run(['bundle', 'binstubs', 'bundler', '--force'], cwd=rails_new_project_dir)
+            rails_bundle_env = os.environ.copy()
+            rails_bundle_env.pop('BUNDLE_GEMFILE', None)
+            run(['bundle', 'binstubs', 'bundler', '--force'],
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             if '{{ cookiecutter.api_only }}' == 'No':
                 run(['bin/rails', 'importmap:install'],
-                    cwd=rails_new_project_dir)
+                    cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'annotate:install', '--force'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             # we patch Gemfile later in a more pleasing way
             run(['bin/bundle', 'remove', 'rspec-rails', 'annotate'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
             run(['gcp', '-R', '--backup',
