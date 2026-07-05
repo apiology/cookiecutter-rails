@@ -230,6 +230,8 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
     steps:
       - quality
+    # quality job OOM-killed postgres sidecar on medium (4GB); build already uses large.
+    resource_class: xlarge
   build:
     working_directory: ~/{{cookiecutter.project_slug}}
     docker:

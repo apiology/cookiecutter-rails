@@ -1,0 +1,4 @@
+---
+ignore:
+  # oauth2 2.x required; some gems pin oauth2 1.x (e.g. asana ~> 1.4, github_api ~> 1.0)
+  - GHSA-pp92-crg2-gfv9
