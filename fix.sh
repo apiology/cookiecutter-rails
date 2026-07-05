@@ -193,6 +193,20 @@ ensure_bundle() {
       bundler_version=$(bundle --version | cut -d ' ' -f 3)
   fi
   echo "Bundler version: ${bundler_version}"
+  if [ -f Gemfile.lock ]
+  then
+    lock_bundler=$(awk '/^BUNDLED WITH/{getline; gsub(/^ +/,""); print; exit}' Gemfile.lock)
+    if [ -n "${lock_bundler}" ]
+    then
+      if ! gem list -i bundler -v "${lock_bundler}" >/dev/null 2>&1
+      then
+        >&2 echo "Installing bundler ${lock_bundler} for Gemfile.lock"
+        gem install "bundler:${lock_bundler}"
+        bundler_version="${lock_bundler}"
+        rm -f Gemfile.lock.installed
+      fi
+    fi
+  fi
   bundler_version_major=$(cut -d. -f1 <<< "${bundler_version}")
   bundler_version_minor=$(cut -d. -f2 <<< "${bundler_version}")
   bundler_version_patch=$(cut -d. -f3 <<< "${bundler_version}")
