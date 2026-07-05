@@ -260,6 +260,7 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
             rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
+            run(['bundle', 'install'], cwd=rails_new_project_dir)
             run(['bundle', 'binstubs', 'bundler', '--force'], cwd=rails_new_project_dir)
             run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
                 cwd=rails_new_project_dir)
