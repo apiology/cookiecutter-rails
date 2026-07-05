@@ -100,7 +100,12 @@ PreCommit:
       - "lib/tasks/*.rake"
       - ".git-hooks/**/*.rb"
       - "script/*"
-      - "bin/*"
+      - "bin/ensure_dev_library"
+      - "bin/ensure_package"
+      - "bin/git-commit-validate"
+      - "bin/git-push-validate"
+      - "bin/install_package"
+      - "bin/srb-overcommit"
       - "bin/overcommit_branch"
     exclude:
       # Cursor skills/scripts are agent tooling, not gem API surface
