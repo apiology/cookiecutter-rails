@@ -119,6 +119,7 @@ PreCommit:
       - 'config/boot.rb'
       - 'config/environments/**.rb'
       - 'config/importmap.rb'
+      - 'config/initializers/checkoff.rb'
       - 'config/puma.rb'
       - 'config/routes.rb'
       - 'db/migrate/**/*'
