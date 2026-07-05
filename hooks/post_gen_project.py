@@ -263,9 +263,7 @@ if __name__ == '__main__':
             rails_bundle_env = os.environ.copy()
             rails_bundle_env['BUNDLE_GEMFILE'] = os.path.join(
                 rails_new_project_dir, 'Gemfile')
-            run(['bundle', 'binstubs', 'bundler', '--force'],
-                cwd=rails_new_project_dir, env=rails_bundle_env)
-            run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
+            run(['bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
                 cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
                 cwd=rails_new_project_dir, env=rails_bundle_env)
@@ -275,7 +273,7 @@ if __name__ == '__main__':
             run(['bin/rails', 'g', 'annotate:install', '--force'],
                 cwd=rails_new_project_dir, env=rails_bundle_env)
             # we patch Gemfile later in a more pleasing way
-            run(['bin/bundle', 'remove', 'rspec-rails', 'annotate'],
+            run(['bundle', 'remove', 'rspec-rails', 'annotate'],
                 cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
