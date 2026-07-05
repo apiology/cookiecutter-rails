@@ -127,3 +127,4 @@ types.installed
 # Ignore make target files
 /.make/*
 !/.make/.keep
+rails-boilerplate
