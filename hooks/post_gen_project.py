@@ -261,9 +261,8 @@ if __name__ == '__main__':
 
             rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
             rails_bundle_env = os.environ.copy()
-            rails_bundle_env.pop('BUNDLE_GEMFILE', None)
-            run(['bundle', 'binstubs', 'bundler', '--force'],
-                cwd=rails_new_project_dir, env=rails_bundle_env)
+            rails_bundle_env['BUNDLE_GEMFILE'] = os.path.join(
+                rails_new_project_dir, 'Gemfile')
             run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
                 cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
