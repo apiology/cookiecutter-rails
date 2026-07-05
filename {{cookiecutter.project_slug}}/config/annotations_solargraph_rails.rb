@@ -105,13 +105,6 @@
 #     include ActiveRecord::AttributeMethods::PrimaryKey
 #     include ActiveRecord::Persistence
 #   end
-#   module ActiveRecord::Callbacks
-#     module ClassMethods
-#       # @param args [Symbol, Array<Symbol>]
-#       # @return [void]
-#       def before_destroy(*args, &block); end
-#     end
-#   end
 #
 # @!override ActiveRecord::QueryMethods#where
 #   @return [ActiveRecord::Relation]
