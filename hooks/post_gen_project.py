@@ -229,6 +229,7 @@ if __name__ == '__main__':
              '-m', 'Initial commit from boilerplate'])
     if 'Yes' != '{{ cookiecutter.use_checkoff }}':
         run(['rm', 'config/annotations_asana.rb'])
+        run(['rm', '.bundler-audit.yml'])
     parent = os.path.dirname(PROJECT_DIRECTORY)
     # https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
     # Make this configurable?

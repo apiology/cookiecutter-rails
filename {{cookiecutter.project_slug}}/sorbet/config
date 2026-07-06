@@ -4,5 +4,8 @@
 --ignore=vendor/
 --ignore=*.sh
 --did-you-mean=false
+--suppress-payload-superclass-redefinition-for=Net::IMAP::CommandData
+--suppress-payload-superclass-redefinition-for=Net::IMAP::Literal
+--suppress-payload-superclass-redefinition-for=Net::IMAP::QuotedString
 --suppress-payload-superclass-redefinition-for=RDoc::Markup::Heading
 @sorbet/machine_specific_config
