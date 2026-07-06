@@ -193,17 +193,24 @@ ensure_bundle() {
       bundler_version=$(bundle --version | cut -d ' ' -f 3)
   fi
   echo "Bundler version: ${bundler_version}"
+  if [ -f Gemfile.lock ]
+  then
+    lock_bundler=$(awk '/^BUNDLED WITH/{getline; gsub(/^ +/,""); print; exit}' Gemfile.lock)
+    if [ -n "${lock_bundler}" ]
+    then
+      if ! gem list -i bundler -v "${lock_bundler}" >/dev/null 2>&1
+      then
+        >&2 echo "Installing bundler ${lock_bundler} for Gemfile.lock"
+        gem install "bundler:${lock_bundler}"
+        bundler_version="${lock_bundler}"
+        rm -f Gemfile.lock.installed
+      fi
+    fi
+  fi
   bundler_version_major=$(cut -d. -f1 <<< "${bundler_version}")
   bundler_version_minor=$(cut -d. -f2 <<< "${bundler_version}")
   bundler_version_patch=$(cut -d. -f3 <<< "${bundler_version}")
-  #
-  # Version 2.5.5 fixed an issue in 2.2.22 with the 'bump' gem:
-  #
-  # https://app.circleci.com/pipelines/github/apiology/checkoff/1281/workflows/f667f909-c3fc-4ae2-8593-dde2b588a7a7/jobs/2491
-
-  # Version <2.2.9 doesn't seem to handle git branches during 'bundle lock' in some situations
-  #
-  # https://stackoverflow.com/questions/70800753/rails-calling-didyoumeanspell-checkers-mergeerror-name-spell-checker-h
+  # Install bundler >=2.6.9 when older versions fail `bundle lock` on git-branch deps (aff6a48).
   need_better_bundler=false
   if [ "${bundler_version_major}" -lt 2 ]
   then

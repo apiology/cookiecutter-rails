@@ -103,7 +103,7 @@ def verify_backup_file(tilde_filename):
         run(['rm', goal_filename])
         return
 
-    errmsg = f'Found a file ending in ~: {filename}'
+    errmsg = f'Found a file ending in ~: {tilde_filename}'
     # add the contents of old file and new file
     # to the error message
     errmsg += '\n'
@@ -193,6 +193,9 @@ def patch_directory(directory):
                     full_filename = os.path.join(root, filename)
                     original_filename = full_filename[:-6]
                     run(['patch', '--backup', '--force', '-p0', '-i', full_filename])
+                    backup_filename = f'{original_filename}~'
+                    if os.path.exists(backup_filename):
+                        run(['rm', backup_filename])
                     # delete file
                     run(['rm', full_filename])
                 except subprocess.CalledProcessError:
@@ -261,18 +264,21 @@ if __name__ == '__main__':
                  '{{cookiecutter.project_slug}}'], cwd=tempdir)
 
             rails_new_project_dir = os.path.join(tempdir, '{{cookiecutter.project_slug}}')
-            run(['bin/bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
-                cwd=rails_new_project_dir)
+            rails_bundle_env = os.environ.copy()
+            rails_bundle_env['BUNDLE_GEMFILE'] = os.path.join(
+                rails_new_project_dir, 'Gemfile')
+            run(['bundle', 'add', 'rspec-rails', 'annotate', '--group=development,test'],
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'rspec:install', '--force'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             if '{{ cookiecutter.api_only }}' == 'No':
                 run(['bin/rails', 'importmap:install'],
-                    cwd=rails_new_project_dir)
+                    cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['bin/rails', 'g', 'annotate:install', '--force'],
-                cwd=rails_new_project_dir)
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             # we patch Gemfile later in a more pleasing way
-            run(['bin/bundle', 'remove', 'rspec-rails', 'annotate'],
-                cwd=rails_new_project_dir)
+            run(['bundle', 'remove', 'rspec-rails', 'annotate'],
+                cwd=rails_new_project_dir, env=rails_bundle_env)
             run(['rm', '-rf', os.path.join(rails_new_project_dir, '.git')])
             # copy artifacts back
             run(['gcp', '-R', '--backup',

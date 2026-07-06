@@ -33,9 +33,6 @@ SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new(
 )
 # https://github.com/simplecov-ruby/simplecov/blob/ba57b3c07381e7d7d83c255309f371f816bf942d/lib/simplecov/profiles/rails.rb
 SimpleCov.start 'rails' do
-  # @!parse
-  #   extend SimpleCov::Configuration
-
   # this dir used by CircleCI
   add_group 'Scripts', 'script/'
   track_files 'script/*'
@@ -44,7 +41,7 @@ SimpleCov.start 'rails' do
   add_filter(%r{^/vendor/bundle})
   add_filter(%r{^/spec})
   track_files 'lib/**/*.rb'
-
+  # @sg-ignore Wrong argument type for SimpleCov::Configuration#enable_coverage: criterion expected :line, :branch, received Symbol
   enable_coverage(:branch) # Report branch coverage to trigger branch-level undercover warnings
 end
 
