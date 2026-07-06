@@ -17,7 +17,6 @@
  # it.
  #
  # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-+
 +{% endif %}
 +require 'simplecov'
 +require 'simplecov-lcov'
