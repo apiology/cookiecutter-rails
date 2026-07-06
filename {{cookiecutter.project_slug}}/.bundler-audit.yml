@@ -1,0 +1,4 @@
+---
+ignore:
+  # oauth2 2.x required; checkoff stack pins oauth2 1.x via asana/github_api
+  - GHSA-pp92-crg2-gfv9
