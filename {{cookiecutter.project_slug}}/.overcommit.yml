@@ -129,6 +129,8 @@ PreCommit:
       # I don't know why this fails
       # https://app.circleci.com/pipelines/github/apiology/cookiecutter-rails/178/workflows/20d4f825-50a3-4dc1-8b6d-9a155fc892cc/jobs/375
       - 'config/environments/**.rb'
+      - '*.gemspec'
+      - 'rakelib/*.rake'
       - script/.rubocop.yml
       - vendor/**/*
       - spec/**/*
