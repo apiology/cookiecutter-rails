@@ -205,7 +205,7 @@ commands:
             bin/overcommit --sign pre-commit
             bin/overcommit --sign pre-push
             bundle exec git add Gemfile.lock sorbet
-            bundle exec git commit -m "Bump dependency releases"
+            OVERCOMMIT_DISABLE=1 bundle exec git commit -m "Bump dependency releases"
             OVERCOMMIT_DEBUG=1 bundle exec git push --set-upstream origin "${CIRCLE_BRANCH:?}"
             echo "Avoiding double build after git push"
             exit 1
