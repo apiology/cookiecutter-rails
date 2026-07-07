@@ -11,15 +11,31 @@
 /.env*
 !/.env*.erb
 
+# Ignore all default key files.
+/config/master.key
+/config/credentials/*.key
+
 # used for local dev only
 /config/env.1p
-/config/env.local
 
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+
+# Ignore development files
+/.devcontainer
 
 # Ignore Docker-related files
 /.dockerignore
