@@ -55,6 +55,12 @@ commands:
       - restore_cache:
           # NOTE: bump the ruby-types-vN- prefix when YARD_OPTS changes in
           # the Makefile (see the comment there for why).
+          # restore_cache keys are a fallback chain (longest/most specific first).
+          # Key 3 keeps rbs_collection.lock.yaml but drops Makefile and
+          # .circleci/config.yml so Makefile/CI-only changes still hit cache
+          # when gem deps and the rbs lock are unchanged (baked e1a8946:
+          # "Include rbs_collection.lock.yaml checksum in the third restore_cache
+          # key so partial cache hits match the save key chain.").
           name: Restore ruby-types cache
           keys:
             - ruby-types-v11-{% raw %}{{ checksum "Gemfile" }}{% endraw %}-{% raw %}{{ checksum "Gemfile.lock" }}{% endraw %}-{% raw %}{{ checksum "rbs_collection.lock.yaml" }}{% endraw %}-{% raw %}{{ checksum "Makefile" }}{% endraw %}-{% raw %}{{ checksum ".circleci/config.yml" }}{% endraw %}-
