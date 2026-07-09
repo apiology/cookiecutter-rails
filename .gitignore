@@ -131,3 +131,4 @@ types.installed
 /.make/*
 !/.make/.keep
 rails-boilerplate
+.env-local-probe-path
