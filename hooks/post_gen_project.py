@@ -238,6 +238,18 @@ def diagnose_patch_error(patch_filename, target_file):
                   flush=True, file=sys.stdout)
 
 
+def patch_file_obsolete(full_filename, original_filename):
+    """Skip patches whose changes are already present (platform-specific upstream files)."""
+    if not original_filename.endswith('bin/bundle'):
+        return False
+    with open(original_filename, encoding='utf-8') as f:
+        if 'rubocop:disable Rails/Present' in f.read():
+            print(f'Skipping obsolete patch {full_filename}')
+            run(['rm', full_filename])
+            return True
+    return False
+
+
 def patch_directory(directory):
     for root, _dirs, files in os.walk(directory):
         if big_and_irrelevant_directory(root):
@@ -248,6 +260,8 @@ def patch_directory(directory):
                 try:
                     full_filename = os.path.join(root, filename)
                     original_filename = full_filename[:-6]
+                    if patch_file_obsolete(full_filename, original_filename):
+                        continue
                     run(['patch', '--backup', '--force', '-p0', '-i', full_filename])
                     backup_filename = f'{original_filename}~'
                     if os.path.exists(backup_filename):
