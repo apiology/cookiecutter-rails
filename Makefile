@@ -164,20 +164,4 @@ update_apt: .make/apt_updated
 cicoverage: citest ## check code coverage
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
-	bin/overcommit --uninstall
-	git checkout main && git pull && git checkout -b update-from-upstream-cookiecutter-$$(date +%Y-%m-%d-%H%M)
-	git checkout main; overcommit --sign && overcommit --sign pre-commit && overcommit --sign pre-push && git checkout main && git pull && git checkout -b update-from-cookiecutter-$$(date +%Y-%m-%d-%H%M)
-	git fetch cookiecutter-upstream
-	git fetch -a
-	git merge cookiecutter-upstream/main --allow-unrelated-histories || true
-	git checkout --ours Gemfile.lock || true
-	# update frequently security-flagged gems while we're here
-	bundle update --conservative json rexml || true
-	( make build && git add Gemfile.lock ) || true
-	bin/overcommit --install || true
-	@echo
-	@echo "Please resolve any merge conflicts below and push up a PR with:"
-	@echo
-	@echo '   gh pr create --title "Update from upstream" --body "Automated PR to update from upstream"'
-	@echo
-	@echo
+	bin/cookiecutter_project_upgrader.sh
