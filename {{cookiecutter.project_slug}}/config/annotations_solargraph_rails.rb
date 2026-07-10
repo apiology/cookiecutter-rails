@@ -45,6 +45,7 @@
 #     include ActionController::Base
 #     include ActionController::Renderer
 #     extend ActiveSupport::Callbacks::ClassMethods
+#     extend ActiveSupport::Rescuable::ClassMethods
 #     extend AbstractController::Callbacks::ClassMethods
 #   end
 #   class ActionDispatch::Routing::Mapper

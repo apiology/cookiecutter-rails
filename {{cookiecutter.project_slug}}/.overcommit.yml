@@ -79,6 +79,9 @@ PreCommit:
     flags: ['-c', '.yamllint.yml', '--format=parsable', '--strict']
     on_warn: fail
     exclude:
+      # ignore files which should stay synced with the style from Rails for
+      # easier upgrading
+      - config/**/*.yml
       - 'rbs_collection.yaml' # generated
       - 'rbs_collection.lock.yaml' # generated
       - '.rubocop_todo.yml' # generated
