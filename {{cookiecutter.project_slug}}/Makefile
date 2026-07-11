@@ -1,4 +1,4 @@
-.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default docs gem_dependencies help ngrok overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage update_from_cookiecutter yard
+.PHONY: build build-typecheck bundle_install cicoverage citypecheck citest citypecoverage clean clean-coverage clean-typecheck clean-typecoverage coverage default docs gem_dependencies help ngrok overcommit quality repl report-coverage rubocop rubocop-ratchet spec test typecheck typecoverage post_cookiecutter_sync update_from_cookiecutter yard
 
 .DEFAULT_GOAL := default
 
@@ -304,3 +304,11 @@ ngrok: ## Start ngrok to expose local server to the internet
 
 update_from_cookiecutter: ## Bring in changes from template project used to create this repo
 	bin/cookiecutter_project_upgrader.sh
+	@$(MAKE) post_cookiecutter_sync
+
+post_cookiecutter_sync: ## Ecosystem-specific steps after template sync
+	git checkout --theirs sorbet/rbi/gems || true
+	bundle update --conservative json nokogiri rack rexml yard brakeman || true
+	( make build && git add Gemfile.lock ) || true
+	bin/spoom srb bump || true
+
