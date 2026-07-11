@@ -132,7 +132,7 @@ variables in the Environment, `op inject` once, import that file, and confirm
 
 ## Syncing boilerplate
 
-See [docs/SYNCING_BOILERPLATE.md](docs/SYNCING_BOILERPLATE.md). Interpret hierarchy at **this** tier (`cookiecutter-ruby`, Ruby) using `.cursor/rules/template-hierarchy.mdc` when present.
+See [docs/SYNCING_BOILERPLATE.md](docs/SYNCING_BOILERPLATE.md). Interpret hierarchy at **this** tier (`cookiecutter-rails`, Rails) using `.cursor/rules/template-hierarchy.mdc` when present.
 
 ## Conventions
 

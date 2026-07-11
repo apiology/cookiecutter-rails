@@ -1,6 +1,6 @@
 # Syncing boilerplate from reference repos
 
-**This template:** `cookiecutter-ruby` (Ruby cookiecutter).
+**This template:** `cookiecutter-rails` (Rails cookiecutter).
 
 This repo is one tier in a **hierarchical** cookiecutter family (general → specific). The same workflow applies whether you are at the meta, language, or framework layer — only the **scope** changes.
 
@@ -20,7 +20,7 @@ Record SHAs in your PR when syncing.
 
 | Direction | Rule |
 |-----------|------|
-| Reference → **this** template | Port only what fits **this** level (Ruby). |
+| Reference → **this** template | Port only what fits **this** level (Rails). |
 | Reference → **descendant** templates | Do not add here; use a more specific child cookiecutter. |
 | **Ancestor** → this template | Pull agnostic fixes down; never push specificity **up**. |
 | **This** → **descendants** | Push tier-appropriate config down; keep narrower bits in children. |
