@@ -1,10 +1,8 @@
 ---
+name: circleci-logs-before-local-ci
 description: >-
   Failed CircleCI check — MUST fetch logs via CircleCI MCP (get_build_failure_logs)
   or CLI before long local CI; ask user to enable MCP if missing
-globs:
-  - ".circleci/**"
-  - "Makefile"
 alwaysApply: false
 ---
 
@@ -39,7 +37,7 @@ If MCP tools are unavailable, ask the user to reload Cursor or fix MCP — do no
 
 ## After logs
 
-Fix from the **CI error message**, push, `gh pr checks --watch`. For baked Rails apps, read nested **`typecheck-rbi-and-ci.mdc`** when CI and local Solargraph/Sorbet disagree.
+Fix from the **CI error message**, push, `gh pr checks --watch`. For baked Rails apps, read the nested **`typecheck-rbi-and-ci`** skill when CI and local Solargraph/Sorbet disagree.
 
 ## Not CircleCI
 
