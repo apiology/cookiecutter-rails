@@ -2,6 +2,13 @@
 
 .DEFAULT_GOAL := default
 
+# Without LANG/LC_ALL set, Ruby's default external encoding falls back to
+# US-ASCII, which crashes `bin/parlour run` (via whitequark/parser) on any
+# source file with non-ASCII bytes. Non-interactive callers (agents, CI
+# sandboxes) often don't have a locale set, so pin UTF-8 here rather than
+# relying on the caller's environment.
+export RUBYOPT ?= -Eutf-8:utf-8
+
 define PRINT_HELP_PYSCRIPT
 import re, sys
 
